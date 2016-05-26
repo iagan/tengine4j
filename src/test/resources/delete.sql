@@ -1,0 +1,1 @@
+insert into t_user(id, name, age, addr) values(2,'agan',23, 'guangzhou');

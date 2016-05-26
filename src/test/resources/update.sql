@@ -1,0 +1,1 @@
+update t_user set name = 'agan', age = 18, addr = ${addr} where id = 2;
