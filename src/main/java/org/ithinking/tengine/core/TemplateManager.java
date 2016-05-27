@@ -31,7 +31,7 @@ public class TemplateManager {
 	
 	public Template getTemplate(String id){
 		Template tpl = TEMPLATES.get(id);
-		if(tpl != null){
+		if(tpl != null && !tpl.isModified()){
 			return tpl;
 		}else{
 			Resource res = loader.load(id);
