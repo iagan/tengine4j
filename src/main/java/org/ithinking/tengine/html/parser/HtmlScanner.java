@@ -133,7 +133,7 @@ public class HtmlScanner extends TextScanner {
 	/**
 	 * 从指定位置开始截止字符串到当前位置
 	 * 
-	 * @param start
+	 *
 	 * @return
 	 */
 	public String substrFromMark() {
