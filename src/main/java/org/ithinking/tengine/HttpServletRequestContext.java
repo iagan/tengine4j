@@ -1,7 +1,5 @@
 package org.ithinking.tengine;
 
-import org.ithinking.tengine.core.Context;
-import org.ithinking.tengine.core.Template;
 import org.ithinking.tengine.core.TemplateManager;
 
 import javax.servlet.ServletContext;
