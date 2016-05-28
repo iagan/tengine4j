@@ -7,6 +7,8 @@ import java.util.*;
 public class Configuration {
     // 模板编码
     private String viewCharset;
+    // 模板基目录
+    private String viewDocBase;
     // tg.view.prefix
     private String viewPrefix;
     // tg.view.suffix= .html
@@ -110,6 +112,8 @@ public class Configuration {
                     configuration.setViewPrefix(value == null ? null : value.trim());
                 } else if ("tg.view.suffix".equals(key)) {
                     configuration.setViewSuffix(value == null ? null : value.trim());
+                } else if("tg.view.docBase".equals(key)){
+                    configuration.setViewDocBase(value == null ? null : value.trim());
                 }
             }
         }
@@ -133,6 +137,16 @@ public class Configuration {
     public void setViewPrefix(String viewPrefix) {
         if(!isDefault) {
             this.viewPrefix = viewPrefix;
+        }
+    }
+
+    public String getViewDocBase() {
+        return viewDocBase;
+    }
+
+    public void setViewDocBase(String viewDocBase) {
+        if(!isDefault) {
+            this.viewDocBase = viewDocBase;
         }
     }
 

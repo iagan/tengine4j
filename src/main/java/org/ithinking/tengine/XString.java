@@ -98,4 +98,12 @@ public class XString {
 		}
 		return sb.toString();
 	}
+
+	public static boolean isBlank(String src){
+		return src == null || src.trim().isEmpty();
+	}
+
+	public static boolean isNotBlank(String src){
+		return !isBlank(src);
+	}
 }

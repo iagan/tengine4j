@@ -24,7 +24,7 @@ public class ClasspathLoader extends AbstractLoader {
         Resource res = null;
         if (url.getProtocol().equals("file")) {
             File file = new File(url.getFile() + "/" + prefix + "/" + templateId);
-            if (file.exists()) {
+            if (file.exists() && file.isFile()) {
                 String text = this.load(file, encoding);
                 if (text != null) {
                     res = new Resource();

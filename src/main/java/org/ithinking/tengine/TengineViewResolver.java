@@ -7,6 +7,7 @@ import org.ithinking.tengine.core.TemplateManager;
 import org.ithinking.tengine.html.parser.HtmlParser;
 import org.ithinking.tengine.loader.ClasspathLoader;
 import org.ithinking.tengine.loader.FilepathLoader;
+import org.ithinking.tengine.loader.LoaderFactory;
 import org.springframework.web.context.support.WebApplicationObjectSupport;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
@@ -26,8 +27,15 @@ public class TengineViewResolver extends WebApplicationObjectSupport implements 
     private String prefix;
     private String suffix;
     private String charset;
-    private String contextRealPath;
-    private String docRoot;
+    private String docBase;
+
+    public String getDocBase() {
+        return docBase;
+    }
+
+    public void setDocBase(String docBase) {
+        this.docBase = docBase;
+    }
 
     public String getPrefix() {
         return prefix;
@@ -57,26 +65,20 @@ public class TengineViewResolver extends WebApplicationObjectSupport implements 
     protected void initServletContext(ServletContext servletContext) {
         super.initServletContext(servletContext);
         Configuration conf = Configuration.newConfiguration();
-
-
-        this.contextRealPath = servletContext.getRealPath(servletContext.getContextPath());
-
+        //
+        this.docBase = XString.defVal(this.docBase, servletContext.getRealPath(servletContext.getContextPath()));
         this.charset = XString.defVal(this.charset, conf.getViewCharset(), "UTF-8");
         this.prefix = XString.defVal(this.prefix, conf.getViewPrefix(), "classpath:");
         this.suffix = XString.defVal(this.suffix, conf.getViewSuffix(), ".html");
+        //
+        conf.setViewDocBase(docBase);
+        conf.setViewCharset(this.charset);
+        conf.setViewPrefix(this.prefix);
+        conf.setViewSuffix(this.suffix);
 
-        docRoot = XString.makePath(contextRealPath.trim(), prefix.trim());
-        if (!docRoot.endsWith(File.separator)) {
-            docRoot += File.separator;
-        }
-
-        Loader loader = new ClasspathLoader(conf.getViewPrefix(), conf.getViewCharset());
+        //
+        Loader loader = LoaderFactory.createLoader(conf);
         HtmlParser parser = new HtmlParser();
-
-        if (prefix.toLowerCase().trim().indexOf("classpath:") != 0) {
-            loader = new FilepathLoader(docRoot, conf.getViewCharset());
-        }
-
         manager = new TemplateManager(loader, conf, parser);
     }
 

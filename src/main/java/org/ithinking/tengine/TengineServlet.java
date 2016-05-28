@@ -3,6 +3,7 @@ package org.ithinking.tengine;
 import org.ithinking.tengine.core.*;
 import org.ithinking.tengine.html.parser.HtmlParser;
 import org.ithinking.tengine.loader.ClasspathLoader;
+import org.ithinking.tengine.loader.LoaderFactory;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -23,16 +24,32 @@ public class TengineServlet implements Servlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         this.servletConfig = config;
-        conf =  Configuration.newConfiguration();
-        Loader loader;
+        conf = Configuration.newConfiguration();
+
         String realRoot = config.getServletContext().getRealPath(config.getServletContext().getContextPath());
-        String prefix = config.getInitParameter("prefix").trim();
-        String viewCharset = config.getInitParameter("viewCharset").trim();
-        if (prefix.startsWith("classpath:")) {
-            loader = new ClasspathLoader(prefix, XString.defVal(viewCharset, conf.getViewCharset()));
+        String docBase = config.getInitParameter("tg.view.docBase");
+        String prefix = config.getInitParameter("tg.view.prefix");
+        String suffix = config.getInitParameter("tg.view.suffix");
+        String charset = config.getInitParameter("tg.view.charset");
+
+        if (XString.isNotBlank(docBase)) {
+            conf.setViewDocBase(docBase);
         } else {
-            loader = new ClasspathLoader(XString.makePath(realRoot, prefix), XString.defVal(viewCharset, conf.getViewCharset()));
+            conf.setViewDocBase(realRoot);
         }
+
+        if (XString.isNotBlank(prefix)) {
+            conf.setViewPrefix(prefix);
+        }
+        if (XString.isNotBlank(charset)) {
+            conf.setViewCharset(charset);
+        }
+
+        if (XString.isNotBlank(suffix)) {
+            conf.setViewSuffix(suffix);
+        }
+
+        Loader loader = LoaderFactory.createLoader(conf);
         HtmlParser parser = new HtmlParser();
         manager = new TemplateManager(loader, conf, parser);
     }
