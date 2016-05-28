@@ -18,7 +18,7 @@ public class HtmlTengineTest {
 	/**
 	 * bug: 1. 字符区域写上 "或'字符时，会出现解析错误
 	 */
-	//@Test
+	@Test
 	public void test() {
 		Configuration conf = new Configuration();
 		Loader loader = new ClasspathLoader(conf);

@@ -41,19 +41,19 @@ public class DefContext implements Context {
 
 	@Override
 	public Context write(String s) {
-		write(s.getBytes(charset));
+		System.out.print(s);
 		return this;
 	}
 	
 	@Override
 	public Context write(String s, int start, int len) {
-		System.out.print(s.substring(start, len));
+		System.out.print(s.substring(start, start + len));
 		return this;
 	}
 	
 	@Override
 	public Context write(char[] values, int start, int len){
-		System.out.print(String.copyValueOf(values, start, len));
+		System.out.print(String.copyValueOf(values, start, start + len));
 		return this;
 	}
 
@@ -65,8 +65,8 @@ public class DefContext implements Context {
 	
 	@Override
 	public Context write(byte[] bytes, int start, int len){
-		String text = new String(bytes, start, len, charset);
-		write(text);
+		String text = new String(bytes, start, start + len, charset);
+		System.out.print(text);
 		return this;
 	}
 
