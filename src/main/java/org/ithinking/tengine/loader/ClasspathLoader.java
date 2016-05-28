@@ -23,7 +23,7 @@ public class ClasspathLoader extends AbstractLoader {
         URL url = classLoader.getResource("");
         Resource res = null;
         if (url.getProtocol().equals("file")) {
-            File file = new File(url.getFile() + "/" + prefix + templateId);
+            File file = new File(url.getFile() + "/" + prefix + "/" + templateId);
             if (file.exists()) {
                 String text = this.load(file, encoding);
                 if (text != null) {
