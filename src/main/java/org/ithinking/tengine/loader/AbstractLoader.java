@@ -11,23 +11,36 @@ import org.ithinking.tengine.core.Loader;
 
 public abstract class AbstractLoader implements Loader {
 
-	public String load(File file) {
-		StringBuilder sb = new StringBuilder();
-		if (file.exists()) {
-			InputStream ins = null;
-			try {
-				ins = new FileInputStream(file);
-				BufferedReader bf = new BufferedReader(new InputStreamReader(ins));
-				String temp;
+    public String load(File file) {
+        StringBuilder sb = null;
+        if (file.exists()) {
+            sb = new StringBuilder();
+            InputStream ins = null;
+            try {
+                ins = new FileInputStream(file);
+                BufferedReader bf = new BufferedReader(new InputStreamReader(ins));
+                String temp;
 
-				while ((temp = bf.readLine()) != null) {
-					sb.append(temp).append("\n");
-				}
-				bf.close();
-			} catch (IOException ioe) {
-				throw new RuntimeException();
-			}
-		}
-		return sb.toString();
-	}
+                while ((temp = bf.readLine()) != null) {
+                    sb.append(temp).append("\n");
+                }
+                bf.close();
+            } catch (IOException ioe) {
+                throw new RuntimeException();
+            } finally {
+                close(ins);
+            }
+        }
+        return sb == null ? null : sb.toString();
+    }
+
+    protected void close(InputStream is) {
+        try {
+            if (is != null) {
+                is.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
