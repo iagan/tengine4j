@@ -65,7 +65,7 @@ public class TengineViewResolver extends WebApplicationObjectSupport implements 
         this.prefix = XString.defVal(this.prefix, conf.getViewPrefix(), "classpath");
         this.suffix = XString.defVal(this.suffix, conf.getViewSuffix(), ".html");
 
-        docRoot = XString.makePath(contextRealPath, prefix);
+        docRoot = XString.makePath(contextRealPath.trim(), prefix.trim());
         if (!docRoot.endsWith(File.separator)) {
             docRoot += File.separator;
         }
@@ -73,7 +73,7 @@ public class TengineViewResolver extends WebApplicationObjectSupport implements 
         Loader loader = new ClasspathLoader(conf.getViewPrefix(), conf.getViewCharset());
         HtmlParser parser = new HtmlParser();
 
-        if (prefix.toLowerCase().indexOf("classpath:") != 0) {
+        if (prefix.toLowerCase().trim().indexOf("classpath:") != 0) {
             loader = new FilepathLoader(docRoot, conf.getViewCharset());
         }
 
