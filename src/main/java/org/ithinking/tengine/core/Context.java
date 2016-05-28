@@ -13,15 +13,15 @@ public interface Context {
 	
 	public Template loadTemplate(String path);
 	
-	public Context writeHeader(String name, String value) throws IOException;
+	public Context writeHeader(String name, String value);
 	
-	public Context write(String s) throws IOException;
+	public Context write(String s);
 	
-	public Context write(String s, int start, int len) throws IOException;
+	public Context write(String s, int start, int len);
 	
-	public Context write(char[] values, int start, int len) throws IOException;
+	public Context write(char[] values, int start, int len);
 	
 	public Context write(byte[] bytes) throws IOException;
 	
-	public Context write(byte[] bytes, int start, int len) throws IOException;
+	public Context write(byte[] bytes, int start, int len);
 }

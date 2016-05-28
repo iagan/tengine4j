@@ -17,6 +17,7 @@ public class TengineView implements View {
     private TemplateManager manager = null;
     private Template template = null;
     public static final String DEFAULT_CONTENT_TYPE = "text/html;charset=UTF-8";
+    private String charset = null;
 
     public TengineView(Template template, TemplateManager manager) {
         this.manager = manager;
@@ -30,7 +31,7 @@ public class TengineView implements View {
 
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        Context context = new HttpServletRequestContext(manager, request, response);
+        Context context = new HttpServletRequestContext(manager, request, response, charset);
         if (template != null) {
             template.render(context);
         }

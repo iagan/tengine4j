@@ -19,10 +19,12 @@ public class TengineServlet implements Servlet{
 
     private ServletConfig servletConfig;
 
+    private  Configuration conf;
+
     @Override
     public void init(ServletConfig config) throws ServletException {
         this.servletConfig = config;
-        Configuration conf = new Configuration();
+        conf = new Configuration();
         Loader loader = new ClasspathLoader(conf);
         HtmlParser parser = new HtmlParser();
         manager = new TemplateManager(loader, conf, parser);
@@ -40,7 +42,7 @@ public class TengineServlet implements Servlet{
         }
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
-        Context context = new HttpServletRequestContext(manager, request, response);
+        Context context = new HttpServletRequestContext(manager, request, response, conf.getViewCharset());
         String path = request.getServletPath();
         Template template = context.loadTemplate(path);
         if(template != null){

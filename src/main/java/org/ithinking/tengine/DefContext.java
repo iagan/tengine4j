@@ -41,37 +41,37 @@ public class DefContext implements Context {
 
 	@Override
 	public Context write(String s) {
-		System.out.print(s);
+		write(s.getBytes(charset));
 		return this;
 	}
 	
 	@Override
-	public Context write(String s, int start, int len) throws IOException {
+	public Context write(String s, int start, int len) {
 		System.out.print(s.substring(start, len));
 		return this;
 	}
 	
 	@Override
-	public Context write(char[] values, int start, int len) throws IOException{
+	public Context write(char[] values, int start, int len){
 		System.out.print(String.copyValueOf(values, start, len));
 		return this;
 	}
 
 	@Override
-	public Context write(byte[] bytes) throws IOException{
+	public Context write(byte[] bytes){
 		write(bytes, 0, bytes.length);
 		return this;
 	}
 	
 	@Override
-	public Context write(byte[] bytes, int start, int len) throws IOException{
+	public Context write(byte[] bytes, int start, int len){
 		String text = new String(bytes, start, len, charset);
 		write(text);
 		return this;
 	}
 
 	@Override
-	public Context writeHeader(String name, String value) throws IOException{
+	public Context writeHeader(String name, String value){
 		System.out.println(name + ": " + value);
 		return this;
 	}
