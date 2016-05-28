@@ -96,7 +96,7 @@ public class Configuration {
      * @param args
      */
     public static void main(String[] args){
-        Configuration conf = new Configuration();
+        Configuration conf = Configuration.newConfiguration();
         System.out.print(conf);
     }
 
