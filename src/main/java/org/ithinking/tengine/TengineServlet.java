@@ -10,22 +10,29 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- *
  * @author agan
  */
-public class TengineServlet implements Servlet{
+public class TengineServlet implements Servlet {
 
     private TemplateManager manager = null;
 
     private ServletConfig servletConfig;
 
-    private  Configuration conf;
+    private Configuration conf;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         this.servletConfig = config;
         conf = new Configuration();
-        Loader loader = new ClasspathLoader(conf);
+        Loader loader;
+        String realRoot = config.getServletContext().getRealPath(config.getServletContext().getContextPath());
+        String prefix = config.getInitParameter("prefix").trim();
+        String viewCharset = config.getInitParameter("viewCharset").trim();
+        if (prefix.startsWith("classpath:")) {
+            loader = new ClasspathLoader(prefix, XString.defVal(viewCharset, conf.getViewCharset()));
+        } else {
+            loader = new ClasspathLoader(XString.makePath(realRoot, prefix), XString.defVal(viewCharset, conf.getViewCharset()));
+        }
         HtmlParser parser = new HtmlParser();
         manager = new TemplateManager(loader, conf, parser);
     }
@@ -45,7 +52,7 @@ public class TengineServlet implements Servlet{
         Context context = new HttpServletRequestContext(manager, request, response, conf.getViewCharset());
         String path = request.getServletPath();
         Template template = context.loadTemplate(path);
-        if(template != null){
+        if (template != null) {
             template.render(context);
         }
     }
