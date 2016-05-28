@@ -1,34 +1,30 @@
 package org.ithinking.tengine.loader;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 
 import org.ithinking.tengine.core.Loader;
 
 public abstract class AbstractLoader implements Loader {
 
-    public String load(File file) {
+    public String load(File file, String encoding) {
         StringBuilder sb = null;
+        BufferedReader bufferedReader = null;
         if (file.exists()) {
             sb = new StringBuilder();
-            InputStream ins = null;
             try {
-                ins = new FileInputStream(file);
-                BufferedReader bf = new BufferedReader(new InputStreamReader(ins));
-                String temp;
+                InputStreamReader isr = new InputStreamReader(new FileInputStream(
+                        file), encoding);
 
-                while ((temp = bf.readLine()) != null) {
-                    sb.append(temp).append("\n");
+                bufferedReader = new BufferedReader(isr);
+                String line;
+                while ((line = bufferedReader.readLine()) != null) {
+                    sb.append(line).append("\n");
                 }
-                bf.close();
-            } catch (IOException ioe) {
+
+            } catch (Exception ioe) {
                 throw new RuntimeException();
             } finally {
-                close(ins);
+                close(bufferedReader);
             }
         }
         return sb == null ? null : sb.toString();
@@ -43,4 +39,15 @@ public abstract class AbstractLoader implements Loader {
             e.printStackTrace();
         }
     }
+
+    protected void close(Reader reader) {
+        try {
+            if (reader != null) {
+                reader.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

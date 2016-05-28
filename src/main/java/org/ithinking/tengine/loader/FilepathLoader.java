@@ -1,6 +1,7 @@
 package org.ithinking.tengine.loader;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 import org.ithinking.tengine.XString;
 import org.ithinking.tengine.core.Resource;
@@ -8,9 +9,11 @@ import org.ithinking.tengine.core.Resource;
 public class FilepathLoader extends AbstractLoader{
 
 	private String docRoot;
+	private String encoding;
 
-	public FilepathLoader(String docRoot){
+	public FilepathLoader(String docRoot, String encoding){
 		this.docRoot = docRoot;
+		this.encoding = XString.defVal(encoding, "UTF-8");
 	}
 
 	@Override
@@ -18,7 +21,7 @@ public class FilepathLoader extends AbstractLoader{
 		File file = new File(XString.makePath(docRoot, templateId));
 		Resource res = null;
 		if(file != null){
-			String text = load(file);
+			String text = load(file, encoding);
 			res = new Resource();
 			res.setPath(file.getAbsolutePath());
 			res.setId(templateId);
@@ -29,9 +32,5 @@ public class FilepathLoader extends AbstractLoader{
 		return res;
 	}
 	
-	@Override
-	public boolean isModified(String templateId, long lastModified) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+
 }

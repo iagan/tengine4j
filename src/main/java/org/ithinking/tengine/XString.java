@@ -49,6 +49,16 @@ public class XString {
 		return -1;
 	}
 
+	public static String defVal(String v1, String v2) {
+		if (v1 != null && !v1.trim().isEmpty()) {
+			return v1.trim();
+		}
+		if (v2 != null && !v2.trim().isEmpty()) {
+			return v2.trim();
+		}
+		return null;
+	}
+
 	public static String defVal(String v1, String v2, String v3) {
 		if (v1 != null && !v1.trim().isEmpty()) {
 			return v1.trim();

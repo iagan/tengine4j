@@ -57,8 +57,7 @@ public class TengineViewResolver extends WebApplicationObjectSupport implements 
     protected void initServletContext(ServletContext servletContext) {
         super.initServletContext(servletContext);
         Configuration conf = new Configuration();
-        Loader loader = new ClasspathLoader(conf);
-        HtmlParser parser = new HtmlParser();
+
 
         this.contextRealPath = servletContext.getRealPath(servletContext.getContextPath());
 
@@ -71,8 +70,11 @@ public class TengineViewResolver extends WebApplicationObjectSupport implements 
             docRoot += File.separator;
         }
 
+        Loader loader = new ClasspathLoader(conf.getViewPrefix(), conf.getViewCharset());
+        HtmlParser parser = new HtmlParser();
+
         if (prefix.toLowerCase().indexOf("classpath:") != 0) {
-            loader = new FilepathLoader(docRoot);
+            loader = new FilepathLoader(docRoot, conf.getViewCharset());
         }
 
         manager = new TemplateManager(loader, conf, parser);

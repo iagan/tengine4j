@@ -3,16 +3,19 @@ package org.ithinking.tengine.loader;
 import java.io.File;
 import java.net.URL;
 
+import org.ithinking.tengine.XString;
 import org.ithinking.tengine.core.Configuration;
 import org.ithinking.tengine.core.Resource;
 
 public class ClasspathLoader extends AbstractLoader {
+    // 文件编码
+    private String encoding;
+    // 路径前缀
+    private String prefix;
 
-    @SuppressWarnings("unused")
-    private Configuration conf;
-
-    public ClasspathLoader(Configuration conf) {
-        this.conf = conf;
+    public ClasspathLoader(String prefix, String encoding) {
+        this.prefix = XString.defVal(prefix, "");
+        this.encoding = XString.defVal(encoding, "UTF-8");
     }
 
     public Resource load(String templateId) {
@@ -20,9 +23,9 @@ public class ClasspathLoader extends AbstractLoader {
         URL url = classLoader.getResource("");
         Resource res = null;
         if (url.getProtocol().equals("file")) {
-            File file = new File(url.getFile() + "/" + templateId);
+            File file = new File(url.getFile() + "/" + prefix + templateId);
             if (file.exists()) {
-                String text = this.load(file);
+                String text = this.load(file, encoding);
                 if (text != null) {
                     res = new Resource();
                     res.setId(templateId);
@@ -35,16 +38,4 @@ public class ClasspathLoader extends AbstractLoader {
         }
         return res;
     }
-
-    @Override
-    public boolean isModified(String templateId, long lastModified) {
-        ClassLoader classLoader = this.getClass().getClassLoader();
-        URL url = classLoader.getResource("");
-        if (url.getProtocol().equals("file")) {
-            File file = new File(url.getFile() + "/" + templateId);
-            return file.lastModified() != lastModified;
-        }
-        return false;
-    }
-
 }
