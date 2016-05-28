@@ -32,7 +32,7 @@ public class TengineView implements View {
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
         Context context = new HttpServletRequestContext(manager, request, response, charset);
-        context.add(model);
+        context.putAll(model);
         if (template != null) {
             template.render(context);
         }

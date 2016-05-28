@@ -16,12 +16,18 @@ public class AviatorExpression implements Expression {
 
 	@Override
 	public Object execute(Context context) {
-		return compileExpression.execute(context.values());
+		Object val = null;
+		try {
+			val = compileExpression.execute(context);
+		}catch (NullPointerException e){
+
+		}
+		return val;
 	}
 
 	@Override
 	public boolean executeForBoolean(Context context) {
-		Object val = compileExpression.execute(context.values());
+		Object val = execute(context);
 		if (val != null && !Boolean.FALSE.equals(val)) {
 			return true;
 		}
@@ -30,7 +36,7 @@ public class AviatorExpression implements Expression {
 
 	@Override
 	public void executeAndWrite(Context context) {
-		Object val = compileExpression.execute(context.values());
+		Object val = execute(context);
 		if (val != null) {
 			context.write(val.toString());
 		} else {
@@ -40,7 +46,7 @@ public class AviatorExpression implements Expression {
 
 	@Override
 	public String executeForString(Context context) {
-		Object val = compileExpression.execute(context.values());
+		Object val = execute(context);
 		return val == null ? null : val.toString();
 	}
 

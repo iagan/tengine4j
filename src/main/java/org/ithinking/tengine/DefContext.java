@@ -7,45 +7,34 @@ import org.ithinking.tengine.core.TemplateManager;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
-public class DefContext implements Context {
+public class DefContext extends HashMap<String, Object> implements Context {
 
-    private Map<String, Object> values = new HashMap<String, Object>();
+
     private Charset charset = Charset.forName("UTF-8");
     private TemplateManager manager;
     private Locale locale;
 
     public DefContext(TemplateManager manager) {
+        super();
         this.manager = manager;
     }
 
-    public DefContext() {
-        this(null);
+    public DefContext(TemplateManager manager, int initialCapacity, float loadFactor) {
+        super(initialCapacity, loadFactor);
+        this.manager = manager;
+    }
+
+
+    public DefContext(TemplateManager manager, int initialCapacity) {
+        super(initialCapacity);
+        this.manager = manager;
     }
 
     @Override
-    public Context add(String key, Object value) {
-        values.put(key, value);
+    public Context add(String key, Object value){
+        this.put(key, value);
         return this;
-    }
-
-    @Override
-    public Context add(Map<String, ?> items) {
-        if (items != null) {
-            values.putAll(items);
-        }
-        return this;
-    }
-
-    @Override
-    public Object get(String key) {
-        return values.get(key);
-    }
-
-    @Override
-    public Map<String, Object> values() {
-        return values;
     }
 
     @Override

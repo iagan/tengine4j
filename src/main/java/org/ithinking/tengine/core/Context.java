@@ -3,15 +3,9 @@ package org.ithinking.tengine.core;
 import java.io.IOException;
 import java.util.Map;
 
-public interface Context {
+public interface Context extends Map<String,Object>{
 
     Context add(String key, Object value);
-
-    Context add(Map<String, ?> items);
-
-    Object get(String key);
-
-    Map<String, Object> values();
 
     Template loadTemplate(String path);
 

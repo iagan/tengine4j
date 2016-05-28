@@ -33,23 +33,17 @@ public class HttpServletRequestContext extends DefContext {
 
 
     @Override
-    public Object get(String key) {
-        /**
-        request.getServletContext().getAttribute("");
-        request.getSession().getAttribute("");
-        request.getParameter("");
-        request.getAttribute("");
-         **/
-       Object value = super.get(key);
+    public Object get(Object key) {
+        Object value = super.get(key);
         if(value == null){
-            value = request.getAttribute(key);
+            value = request.getAttribute(key.toString());
             if(value == null){
                 HttpSession session = request.getSession(false);
                 if(session != null){
-                    value = session.getAttribute(key);
+                    value = session.getAttribute(key.toString());
                 }
                 if(value == null){
-                    value = request.getServletContext().getAttribute(key);
+                    value = request.getServletContext().getAttribute(key.toString());
                 }
             }
         }
@@ -57,54 +51,10 @@ public class HttpServletRequestContext extends DefContext {
     }
 
     @Override
-    public Map<String, Object> values() {
-        HashMap<String, Object> result = new HashMap<>();
-        String key;
-        Enumeration<String> keys;
-        ServletContext servletContext = request.getServletContext();
-        HttpSession session = request.getSession(false);
-
-        // 1.ServletContext
-        keys = servletContext.getAttributeNames();
-        if (keys != null) {
-            while (keys.hasMoreElements()) {
-                key = keys.nextElement();
-                result.put(key, servletContext.getAttribute(key));
-            }
-        }
-
-        // 2.session
-        if(session != null) {
-            keys = session.getAttributeNames();
-            if (keys != null) {
-                while (keys.hasMoreElements()) {
-                    key = keys.nextElement();
-                    result.put(key, session.getAttribute(key));
-                }
-            }
-        }
-
-        // 3.Request
-        keys = request.getAttributeNames();
-        if (keys != null) {
-            while (keys.hasMoreElements()) {
-                key = keys.nextElement();
-                result.put(key, request.getAttribute(key));
-            }
-        }
-
-
-        // 4.Custom
-        Map<String, Object> values = super.values();
-        result.putAll(values);
-
-
-        return result;
+    public Context write(String s) {
+        write(s.getBytes(charset));
+        return this;
     }
-
-
-
-
 
     @Override
     public Context write(String s, int start, int len) {
