@@ -11,6 +11,7 @@ import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
 
 import javax.servlet.ServletContext;
+import java.io.File;
 import java.util.Locale;
 
 /**
@@ -25,6 +26,7 @@ public class TengineViewResolver extends WebApplicationObjectSupport implements 
     private String suffix;
     private String charset;
     private String contextRealPath;
+    private String docRoot;
 
     public String getPrefix() {
         return prefix;
@@ -63,10 +65,45 @@ public class TengineViewResolver extends WebApplicationObjectSupport implements 
         this.prefix = defVal(this.prefix, conf.getViewPrefix(), "UTF-8");
         this.suffix = defVal(this.suffix, conf.getViewSuffix(), "UTF-8");
 
-        System.out.println(this.contextRealPath);
-        System.out.println(this.charset + "," + prefix + "," + suffix);
+        String replacement = File.separator.equals("\\") ? "\\\\" : File.separator;
+        docRoot = (contextRealPath + prefix).replaceAll("\\\\+|/+", replacement);
+        if (!docRoot.endsWith(File.separator)) {
+            docRoot += File.separator;
+        }
 
         manager = new TemplateManager(loader, conf, parser);
+    }
+
+
+    /**
+     * @param viewName /index
+     * @param locale
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public View resolveViewName(String viewName, Locale locale) throws Exception {
+        String viewPath;
+        if (viewName.endsWith(suffix)) {
+            viewPath = makePath(docRoot, viewName);
+        } else {
+            viewPath = makePath(docRoot, viewName + suffix);
+        }
+        Template template = manager.getTemplate(viewPath);
+        if (template != null) {
+            return new TengineView(template, manager);
+        }
+        return null;
+    }
+
+    public String makePath(String parent, String file) {
+        String replacement = File.separator.equals("\\") ? "\\\\" : File.separator;
+        file = file.replaceAll("\\\\+|/+", replacement);
+        if (!file.endsWith(File.separator)) {
+            return parent + file;
+        } else {
+            return parent + file.substring(1);
+        }
     }
 
     private String defVal(String v1, String v2, String v3) {
@@ -85,15 +122,5 @@ public class TengineViewResolver extends WebApplicationObjectSupport implements 
     @Override
     public int getOrder() {
         return 0;
-    }
-
-    @Override
-    public View resolveViewName(String viewName, Locale locale) throws Exception {
-        String viewPath = prefix + viewName + suffix;
-        Template template = manager.getTemplate(viewPath);
-        if (template != null) {
-            return new TengineView(template, manager);
-        }
-        return null;
     }
 }
