@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class Configuration {
     // 模板编码
-    private String charset = "UTF-8";
+    private String viewCharset = "UTF-8";
     // tg.view.prefix
     private String viewPrefix = "/WEB-INF/views/";
     // tg.view.suffix= .html
@@ -15,5 +15,29 @@ public class Configuration {
 
     static {
         CONFIGS = new HashMap<>();
+    }
+
+    public String getViewCharset() {
+        return viewCharset;
+    }
+
+    public void setViewCharset(String viewCharset) {
+        this.viewCharset = viewCharset;
+    }
+
+    public String getViewPrefix() {
+        return viewPrefix;
+    }
+
+    public void setViewPrefix(String viewPrefix) {
+        this.viewPrefix = viewPrefix;
+    }
+
+    public String getViewSuffix() {
+        return viewSuffix;
+    }
+
+    public void setViewSuffix(String viewSuffix) {
+        this.viewSuffix = viewSuffix;
     }
 }
