@@ -6,6 +6,7 @@ import org.ithinking.tengine.core.Template;
 import org.ithinking.tengine.core.TemplateManager;
 import org.ithinking.tengine.html.parser.HtmlParser;
 import org.ithinking.tengine.loader.ClasspathLoader;
+import org.ithinking.tengine.loader.FilepathLoader;
 import org.springframework.web.context.support.WebApplicationObjectSupport;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
@@ -62,8 +63,12 @@ public class TengineViewResolver extends WebApplicationObjectSupport implements 
         this.contextRealPath = servletContext.getRealPath(servletContext.getContextPath());
 
         this.charset = defVal(this.charset, conf.getViewCharset(), "UTF-8");
-        this.prefix = defVal(this.prefix, conf.getViewPrefix(), "UTF-8");
-        this.suffix = defVal(this.suffix, conf.getViewSuffix(), "UTF-8");
+        this.prefix = defVal(this.prefix, conf.getViewPrefix(), "classpath");
+        this.suffix = defVal(this.suffix, conf.getViewSuffix(), ".html");
+
+        if(prefix.toLowerCase().indexOf("classpath:") != 0){
+            loader = new FilepathLoader();
+        }
 
         docRoot = makePath(contextRealPath , prefix);
         if (!docRoot.endsWith(File.separator)) {
