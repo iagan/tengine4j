@@ -62,7 +62,7 @@ public class TengineViewResolver extends WebApplicationObjectSupport implements 
         this.contextRealPath = servletContext.getRealPath(servletContext.getContextPath());
 
         this.charset = XString.defVal(this.charset, conf.getViewCharset(), "UTF-8");
-        this.prefix = XString.defVal(this.prefix, conf.getViewPrefix(), "classpath");
+        this.prefix = XString.defVal(this.prefix, conf.getViewPrefix(), "classpath:");
         this.suffix = XString.defVal(this.suffix, conf.getViewSuffix(), ".html");
 
         docRoot = XString.makePath(contextRealPath.trim(), prefix.trim());
