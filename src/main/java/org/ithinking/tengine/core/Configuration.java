@@ -1,9 +1,6 @@
 package org.ithinking.tengine.core;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FilenameFilter;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.util.*;
 
@@ -15,17 +12,28 @@ public class Configuration {
     // tg.view.suffix= .html
     private String viewSuffix;
     private boolean isDefault = false;
-
-    private static final Map<String,String> CONFIGS;
+    // 默认配置
     private static final Configuration DEFAULT;
 
     static {
         DEFAULT = new Configuration();
-        CONFIGS = new HashMap<>();
-        DEFAULT.isDefault = true;
-        ClassLoader classLoader = Configuration.class.getClassLoader();
         try {
+            ClassLoader classLoader = Configuration.class.getClassLoader();
             Enumeration<URL> urls = classLoader.getResources("");
+            loadProperties(urls);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            DEFAULT.isDefault = true;
+        }
+    }
+
+    private Configuration(){
+        this.isDefault = false;
+    }
+
+    private static void loadProperties(Enumeration<URL> urls) {
+        if(urls != null) {
             String filePath;
             while (urls.hasMoreElements()) {
                 filePath = urls.nextElement().getFile();
@@ -39,19 +47,36 @@ public class Configuration {
                     });
 
                     for (int i = 0, len = files == null ? 0 : files.length; i < len; i++) {
-                        Properties properties = new Properties();
-                        properties.load(new FileInputStream(file));
-                        config(DEFAULT, properties);
+                        config(DEFAULT, loadProperties(files[i]));
                     }
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
-    private Configuration(){
+    private static Properties loadProperties(File file) {
+        Properties properties = new Properties();
+        FileInputStream inputStream = null;
+        try {
+            inputStream = new FileInputStream(file);
+            properties.load(inputStream);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            close(inputStream);
+        }
 
+        return properties;
+    }
+
+    private static void close(InputStream is){
+        if(is != null){
+            try{
+                is.close();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
     }
 
     public static Configuration newConfiguration(){
@@ -90,15 +115,6 @@ public class Configuration {
         }
     }
 
-    /**
-     * just for testing.
-     *
-     * @param args
-     */
-    public static void main(String[] args){
-        Configuration conf = Configuration.newConfiguration();
-        System.out.print(conf);
-    }
 
     public String getViewCharset() {
         return viewCharset;
@@ -128,5 +144,15 @@ public class Configuration {
         if(!isDefault) {
             this.viewSuffix = viewSuffix;
         }
+    }
+
+    /**
+     * just for testing.
+     *
+     * @param args
+     */
+    public static void main(String[] args){
+        Configuration conf = Configuration.newConfiguration();
+        System.out.print(conf);
     }
 }
