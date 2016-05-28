@@ -20,7 +20,7 @@ public class HtmlTengineTest {
 	 */
 	@Test
 	public void test() {
-		Configuration conf = new Configuration();
+		Configuration conf = Configuration.newConfiguration();
 		Loader loader = new ClasspathLoader(conf.getViewSuffix(),conf.getViewCharset());
 		HtmlParser parser = new HtmlParser();
 		//

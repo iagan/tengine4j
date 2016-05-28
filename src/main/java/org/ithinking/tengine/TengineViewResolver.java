@@ -56,7 +56,7 @@ public class TengineViewResolver extends WebApplicationObjectSupport implements 
     @Override
     protected void initServletContext(ServletContext servletContext) {
         super.initServletContext(servletContext);
-        Configuration conf = new Configuration();
+        Configuration conf = Configuration.newConfiguration();
 
 
         this.contextRealPath = servletContext.getRealPath(servletContext.getContextPath());

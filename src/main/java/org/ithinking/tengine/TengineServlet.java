@@ -23,7 +23,7 @@ public class TengineServlet implements Servlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         this.servletConfig = config;
-        conf = new Configuration();
+        conf =  Configuration.newConfiguration();
         Loader loader;
         String realRoot = config.getServletContext().getRealPath(config.getServletContext().getContextPath());
         String prefix = config.getInitParameter("prefix").trim();
