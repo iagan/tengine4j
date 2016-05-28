@@ -21,7 +21,7 @@ public class HtmlTengineTest {
 	@Test
 	public void test() {
 		Configuration conf = new Configuration();
-		Loader loader = new ClasspathLoader(conf);
+		Loader loader = new ClasspathLoader(conf.getViewSuffix(),conf.getViewCharset());
 		HtmlParser parser = new HtmlParser();
 		//
 		User admin = new User("admin", 10, "admin@126.com", "甘肃兰州");

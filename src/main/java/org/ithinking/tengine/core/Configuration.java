@@ -5,11 +5,11 @@ import java.util.Map;
 
 public class Configuration {
     // 模板编码
-    private String viewCharset = "UTF-8";
+    private String viewCharset;
     // tg.view.prefix
-    private String viewPrefix = "/WEB-INF/views/";
+    private String viewPrefix;
     // tg.view.suffix= .html
-    private String viewSuffix = ".html";
+    private String viewSuffix;
 
     private static final Map<String,String> CONFIGS;
 

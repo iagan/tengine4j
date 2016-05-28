@@ -56,7 +56,7 @@ public class XString {
 		if (v2 != null && !v2.trim().isEmpty()) {
 			return v2.trim();
 		}
-		return null;
+		return v2;
 	}
 
 	public static String defVal(String v1, String v2, String v3) {
@@ -69,7 +69,7 @@ public class XString {
 		if (v3 != null && !v3.trim().isEmpty()) {
 			return v3.trim();
 		}
-		return "";
+		return v3;
 	}
 
 	public static String makePath(String parent, String file) {

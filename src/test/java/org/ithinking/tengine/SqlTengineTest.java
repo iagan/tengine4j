@@ -10,7 +10,8 @@ public class SqlTengineTest {
 	@Test
 	public void test() {
 		SQLParser parser = new SQLParser();
-		ClasspathLoader cl = new ClasspathLoader(null);
+
+		ClasspathLoader cl = new ClasspathLoader(null, null);
 		Resource res = cl.load("user.sql");
 		parser.parse(res.getText());
 	}
