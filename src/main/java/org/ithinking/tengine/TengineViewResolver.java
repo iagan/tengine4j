@@ -65,8 +65,7 @@ public class TengineViewResolver extends WebApplicationObjectSupport implements 
         this.prefix = defVal(this.prefix, conf.getViewPrefix(), "UTF-8");
         this.suffix = defVal(this.suffix, conf.getViewSuffix(), "UTF-8");
 
-        String replacement = File.separator.equals("\\") ? "\\\\" : File.separator;
-        docRoot = (contextRealPath + prefix).replaceAll("\\\\+|/+", replacement);
+        docRoot = makePath(contextRealPath , prefix);
         if (!docRoot.endsWith(File.separator)) {
             docRoot += File.separator;
         }
@@ -96,14 +95,31 @@ public class TengineViewResolver extends WebApplicationObjectSupport implements 
         return null;
     }
 
-    public String makePath(String parent, String file) {
-        String replacement = File.separator.equals("\\") ? "\\\\" : File.separator;
-        file = file.replaceAll("\\\\+|/+", replacement);
-        if (!file.endsWith(File.separator)) {
-            return parent + file;
-        } else {
-            return parent + file.substring(1);
+    private String makePath(String parent, String file) {
+        int length = parent.length();
+        int totalLength = length + file.length();
+        char ch;
+        int count = 0;
+        String target = parent;
+        StringBuilder sb = new StringBuilder(parent.length() + file.length());
+        for (int i = 0; i < totalLength; i++) {
+            if (i >= length) {
+                ch = file.charAt(i - length);
+            } else {
+                ch = target.charAt(i);
+            }
+
+            if (ch == '/' || ch == '\\') {
+                if (count == 0) {
+                    sb.append(File.separator);
+                }
+                count++;
+                continue;
+            }
+            count = 0;
+            sb.append(ch);
         }
+        return sb.toString();
     }
 
     private String defVal(String v1, String v2, String v3) {
