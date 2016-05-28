@@ -15,8 +15,10 @@ public class TemplateManager {
 
     private Loader loader;
     private HtmlParser parser;
+    private Configuration conf;
 
     public TemplateManager(Loader loader, Configuration conf, HtmlParser parser) {
+        this.conf = conf;
         this.loader = loader;
         this.parser = parser;
     }
@@ -28,7 +30,7 @@ public class TemplateManager {
         } else {
             Resource res = loader.load(id);
             if (res != null) {
-                Document doc = parser.parse(res.getText());
+                Document doc = parser.parse(res.getText(), conf);
                 if (doc != null) {
                     tpl = new Template();
                     tpl.setResource(res);

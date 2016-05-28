@@ -11,6 +11,8 @@ public abstract class AbstractRender implements Renderable {
 
 	private boolean initialled = false;
 
+	protected Configuration conf;
+
 	@Override
 	public Renderable getParent() {
 		return parent;
@@ -38,6 +40,7 @@ public abstract class AbstractRender implements Renderable {
 	@Override
 	public void init(Configuration conf) {
 		if (!initialled) {
+			this.conf = conf;
 			innerInit(conf);
 			if (sublocks != null) {
 				for (Renderable sub : sublocks) {
@@ -49,6 +52,9 @@ public abstract class AbstractRender implements Renderable {
 	}
 
 	protected void innerInit(Configuration conf) {
+		if(this.conf == null){
+			this.conf = conf;
+		}
 		initialled = true;
 	}
 

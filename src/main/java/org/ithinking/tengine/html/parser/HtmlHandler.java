@@ -94,6 +94,7 @@ public class HtmlHandler implements Handler {
 			tag.setDoc(doc);
 			addTagBlock(tag);
 		} else {
+			// 没有任何特性的标签当做文本处理
 			this.parseText(text, start, end);
 		}
 	}
@@ -110,7 +111,7 @@ public class HtmlHandler implements Handler {
 			} else {
 				throw new RuntimeException("解析错误，标签嵌套错误!");
 			}
-			// 每一个指令结束，都要开启新的文本块
+			// 每一个标签指令结束，都要开启新的文本块
 			currentTextBlock = null;
 		} else if ((features & TAG.F_TAG_CLOSE) == TAG.F_TAG_CLOSE) {
 			this.addPlainText(text, start, end - start + 1);
@@ -128,7 +129,6 @@ public class HtmlHandler implements Handler {
 		if (!blockStack.isEmpty()) {
 			throw new RuntimeException("解析模板有误，请检查标签嵌套情况");
 		}
-		doc.init(null);
 	}
 
 	/**

@@ -17,7 +17,7 @@ public interface Context extends Map<String,Object>{
 
     Context write(char[] values, int start, int len);
 
-    Context write(byte[] bytes) throws IOException;
+    Context write(byte[] bytes);
 
     Context write(byte[] bytes, int start, int len);
 }

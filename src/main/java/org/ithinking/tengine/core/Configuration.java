@@ -1,5 +1,7 @@
 package org.ithinking.tengine.core;
 
+import org.ithinking.tengine.XString;
+
 import java.io.*;
 import java.net.URL;
 import java.util.*;
@@ -14,6 +16,8 @@ public class Configuration {
     // tg.view.suffix= .html
     private String viewSuffix;
     private boolean isDefault = false;
+    // 模板输出字符编码
+    private String viewOutCharset;
     // 默认配置
     private static final Configuration DEFAULT;
 
@@ -114,6 +118,8 @@ public class Configuration {
                     configuration.setViewSuffix(value == null ? null : value.trim());
                 } else if("tg.view.docBase".equals(key)){
                     configuration.setViewDocBase(value == null ? null : value.trim());
+                } else if("tg.view.outCharset".equals(key)){
+                    configuration.setViewOutCharset(value == null ? null : value.trim());
                 }
             }
         }
@@ -158,6 +164,20 @@ public class Configuration {
         if(!isDefault) {
             this.viewSuffix = viewSuffix;
         }
+    }
+
+    public String getViewOutCharset() {
+        return viewOutCharset;
+    }
+
+    public void setViewOutCharset(String viewOutCharset) {
+        if(!isDefault) {
+            this.viewOutCharset = viewOutCharset;
+        }
+    }
+
+    public String getViewOutCharsetOrDefault(){
+        return XString.defVal(viewOutCharset, "UTF-8");
     }
 
     /**
