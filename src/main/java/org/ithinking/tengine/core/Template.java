@@ -6,6 +6,7 @@ public class Template {
 	private Document doc;
 	private TemplateManager manager;
 	private Resource resource;
+	private Object bindingView;
 	
 	public Template(TemplateManager manager){
 		this.manager = manager;
@@ -55,5 +56,13 @@ public class Template {
 
 	public void setResource(Resource resource) {
 		this.resource = resource;
+	}
+
+	public Object getBindingView() {
+		return bindingView;
+	}
+
+	public void setBindingView(Object bindingView) {
+		this.bindingView = bindingView;
 	}
 }

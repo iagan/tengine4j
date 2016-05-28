@@ -62,17 +62,17 @@ public class TengineViewResolver extends WebApplicationObjectSupport implements 
 
         this.contextRealPath = servletContext.getRealPath(servletContext.getContextPath());
 
-        this.charset = defVal(this.charset, conf.getViewCharset(), "UTF-8");
-        this.prefix = defVal(this.prefix, conf.getViewPrefix(), "classpath");
-        this.suffix = defVal(this.suffix, conf.getViewSuffix(), ".html");
+        this.charset = XString.defVal(this.charset, conf.getViewCharset(), "UTF-8");
+        this.prefix = XString.defVal(this.prefix, conf.getViewPrefix(), "classpath");
+        this.suffix = XString.defVal(this.suffix, conf.getViewSuffix(), ".html");
 
-        if(prefix.toLowerCase().indexOf("classpath:") != 0){
-            loader = new FilepathLoader();
-        }
-
-        docRoot = makePath(contextRealPath , prefix);
+        docRoot = XString.makePath(contextRealPath, prefix);
         if (!docRoot.endsWith(File.separator)) {
             docRoot += File.separator;
+        }
+
+        if (prefix.toLowerCase().indexOf("classpath:") != 0) {
+            loader = new FilepathLoader(docRoot);
         }
 
         manager = new TemplateManager(loader, conf, parser);
@@ -87,58 +87,23 @@ public class TengineViewResolver extends WebApplicationObjectSupport implements 
      */
     @Override
     public View resolveViewName(String viewName, Locale locale) throws Exception {
-        String viewPath;
-        if (viewName.endsWith(suffix)) {
-            viewPath = makePath(docRoot, viewName);
-        } else {
-            viewPath = makePath(docRoot, viewName + suffix);
+        if (!viewName.endsWith(suffix)) {
+            viewName += suffix;
         }
-        Template template = manager.getTemplate(viewPath);
+        Template template = manager.getTemplate(viewName, locale);
+        View view = null;
         if (template != null) {
-            return new TengineView(template, manager);
-        }
-        return null;
-    }
-
-    private String makePath(String parent, String file) {
-        int length = parent.length();
-        int totalLength = length + file.length();
-        char ch;
-        int count = 0;
-        String target = parent;
-        StringBuilder sb = new StringBuilder(parent.length() + file.length());
-        for (int i = 0; i < totalLength; i++) {
-            if (i >= length) {
-                ch = file.charAt(i - length);
-            } else {
-                ch = target.charAt(i);
+            if (template.getBindingView() == null) {
+                template.setBindingView(new TengineView(template, manager));
             }
-
-            if (ch == '/' || ch == '\\') {
-                if (count == 0) {
-                    sb.append(File.separator);
-                }
-                count++;
-                continue;
+            if (!(template.getBindingView() instanceof View)) {
+                throw new RuntimeException("BindingView is not a spring View.");
             }
-            count = 0;
-            sb.append(ch);
+            view = (View) template.getBindingView();
         }
-        return sb.toString();
+        return view;
     }
 
-    private String defVal(String v1, String v2, String v3) {
-        if (v1 != null && !v1.trim().isEmpty()) {
-            return v1.trim();
-        }
-        if (v2 != null && !v2.trim().isEmpty()) {
-            return v2.trim();
-        }
-        if (v3 != null && !v3.trim().isEmpty()) {
-            return v3.trim();
-        }
-        return "";
-    }
 
     @Override
     public int getOrder() {

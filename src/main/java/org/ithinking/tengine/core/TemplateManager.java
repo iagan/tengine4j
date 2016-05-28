@@ -1,6 +1,7 @@
 package org.ithinking.tengine.core;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.ithinking.tengine.html.Document;
@@ -29,7 +30,7 @@ public class TemplateManager {
 		template.setDocument(doc);
 	}
 	
-	public Template getTemplate(String id){
+	public Template getTemplate(String id, Locale locale){
 		Template tpl = TEMPLATES.get(id);
 		if(tpl != null && !tpl.isModified()){
 			return tpl;

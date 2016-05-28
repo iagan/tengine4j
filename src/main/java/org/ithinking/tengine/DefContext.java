@@ -1,20 +1,20 @@
 package org.ithinking.tengine;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.ithinking.tengine.core.Context;
 import org.ithinking.tengine.core.Template;
 import org.ithinking.tengine.core.TemplateManager;
+
+import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 public class DefContext implements Context {
 
 	private Map<String, Object> values = new HashMap<String, Object>();
 	private Charset charset = Charset.forName("UTF-8");
 	private TemplateManager manager;
-	
+	private Locale locale;
 	public DefContext(TemplateManager manager){
 		this.manager = manager;
 	}
@@ -78,6 +78,6 @@ public class DefContext implements Context {
 
 	@Override
 	public Template loadTemplate(String path) {
-		return manager.getTemplate(path);
+		return manager.getTemplate(path, locale);
 	}
 }
