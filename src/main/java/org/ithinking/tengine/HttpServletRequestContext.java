@@ -1,11 +1,13 @@
 package org.ithinking.tengine;
 
+import org.ithinking.tengine.core.Context;
 import org.ithinking.tengine.core.TemplateManager;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -93,5 +95,35 @@ public class HttpServletRequestContext extends DefContext {
 
 
         return result;
+    }
+
+    @Override
+    public Context write(String s, int start, int len) throws IOException{
+        response.getWriter().write(s, start, len);
+        return this;
+    }
+
+    @Override
+    public Context write(char[] values, int start, int len) throws IOException{
+        response.getWriter().write(values, start, len);
+        return this;
+    }
+
+    @Override
+    public Context write(byte[] bytes) throws IOException{
+        write(bytes, 0, bytes.length);
+        return this;
+    }
+
+    @Override
+    public Context write(byte[] bytes, int start, int len) throws IOException{
+        response.getOutputStream().write(bytes, start, len);
+        return this;
+    }
+
+    @Override
+    public Context writeHeader(String name, String value) throws IOException{
+        System.out.println(name + ": " + value);
+        return this;
     }
 }
