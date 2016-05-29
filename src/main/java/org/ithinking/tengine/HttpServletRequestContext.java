@@ -4,6 +4,7 @@ import org.ithinking.tengine.core.Context;
 import org.ithinking.tengine.core.TemplateManager;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -34,16 +35,43 @@ public class HttpServletRequestContext extends DefContext {
 
     @Override
     public Object get(Object key) {
-        Object value = super.get(key);
-        if(value == null){
-            value = request.getAttribute(key.toString());
-            if(value == null){
-                HttpSession session = request.getSession(false);
-                if(session != null){
-                    value = session.getAttribute(key.toString());
+        Object value = null;
+        String strKey = key.toString();
+        char first = strKey.charAt(0);
+        char last = strKey.charAt(strKey.length() - 1);
+        if (first == '&') { // 获取请求参数
+            if (last == ']') {
+                int pos = strKey.indexOf("[");
+                strKey = pos != -1 ? strKey.substring(1, pos) : strKey.substring(1, strKey.length() - 1);
+                value = request.getParameterValues(strKey);
+            } else {
+                value = request.getParameter(strKey.substring(1));
+            }
+        } else if (first == '#') { // 获取Cookie
+            Cookie[] cookies = request.getCookies();
+            if (last == ']') {
+                value = cookies;
+            } else {
+                strKey = strKey.substring(1);
+                for(Cookie c : cookies){
+                    if(strKey.equals(c.getName())){
+                        value = c;
+                        break;
+                    }
                 }
-                if(value == null){
-                    value = request.getServletContext().getAttribute(key.toString());
+            }
+        } else {
+            value = super.get(strKey);
+            if (value == null) {
+                value = request.getAttribute(strKey);
+                if (value == null) {
+                    HttpSession session = request.getSession(false);
+                    if (session != null) {
+                        value = session.getAttribute(strKey);
+                    }
+                    if (value == null) {
+                        value = request.getServletContext().getAttribute(strKey);
+                    }
                 }
             }
         }
