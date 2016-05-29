@@ -1,5 +1,6 @@
 package org.ithinking.tengine.html;
 
+import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -153,23 +154,23 @@ public class Tag extends AbstractRender {
 			throw new RuntimeException("template is not exists.");
 		}
 
-		String tagetFragId = fragAttr.getFragid() == null ? null : fragAttr.getFragid().executeForString(ctx);
+		String targetFragId = fragAttr.getFragid() == null ? null : fragAttr.getFragid().executeForString(ctx);
 		boolean bodyOnly = fragAttr.isBodyOnly();
 		if (fragAttr.isInclude()) {
 			this.renderStartTag(ctx);
-			this.renderFragTag(ctx, refDoc, bodyOnly, tagetFragId);
+			this.renderFragTag(ctx, refDoc, bodyOnly, targetFragId);
 			this.renderEndTag(ctx);
 		} else if (fragAttr.isReplace()) {
-			this.renderFragTag(ctx, refDoc, bodyOnly, tagetFragId);
+			this.renderFragTag(ctx, refDoc, bodyOnly, targetFragId);
 		} else if (fragAttr.isFirst()) {
 			this.renderStartTag(ctx);
-			this.renderFragTag(ctx, refDoc, bodyOnly, tagetFragId);
+			this.renderFragTag(ctx, refDoc, bodyOnly, targetFragId);
 			this.renderBody(ctx);
 			this.renderEndTag(ctx);
 		} else if (fragAttr.isLast()) {
 			this.renderStartTag(ctx);
 			this.renderBody(ctx);
-			this.renderFragTag(ctx, refDoc, bodyOnly, tagetFragId);
+			this.renderFragTag(ctx, refDoc, bodyOnly, targetFragId);
 			this.renderEndTag(ctx);
 		} else {
 			throw new RuntimeException("未知渲染位置!");
@@ -199,25 +200,67 @@ public class Tag extends AbstractRender {
 	}
 
 	private void renderList(Context context, List<?> list) {
-		int size = list == null ? 0 : list.size();
-		if (size > 0) {
-			Object obj = null;
+		try {
+			int size = list == null ? 0 : list.size();
+			if (size > 0) {
+				Object obj;
+				String key = repeatAttr.getParam();
+				if (key == null || key.isEmpty()) {
+					key = "$item";
+				}
+				Indicator index = new Indicator();
+				index.setSize(size);
+				context.add("$stat", index);
+				for (int i = 0, row = 1; i < size; i++) {
+					obj = list.get(i);
+					index.setIndex(i);
+					context.add(key, obj);
+					if (this.isContinue(context)) {
+						index.setRow(row++);
+						this.renderTag(context);
+					}
+				}
+			}
+		}finally {
+			if(list instanceof Closeable){
+				close(((Closeable)list));
+			}
+		}
+	}
+
+	private void renderIterator(Context context, Iterator<?> iterator){
+		try {
+			Indicator index = new Indicator();
+			int i = 0, row = 1;
+			context.add("$stat", index);
 			String key = repeatAttr.getParam();
 			if (key == null || key.isEmpty()) {
 				key = "$item";
 			}
-			Indicator index = new Indicator();
-			index.setSize(size);
-			context.add("$stat", index);
-			for (int i = 0, row = 1; i < size; i++) {
-				obj = list.get(i);
+			Object item;
+			while (iterator.hasNext()) {
+				item = iterator.next();
 				index.setIndex(i);
-				context.add(key, obj);
+				context.add(key, item);
 				if (this.isContinue(context)) {
 					index.setRow(row++);
 					this.renderTag(context);
 				}
 			}
+		}finally {
+			if(iterator instanceof Closeable){
+				close(((Closeable)iterator));
+			}
+		}
+	}
+
+	private void close(Closeable closeable){
+		try{
+			if(closeable != null){
+				closeable.close();
+			}
+		}catch (Exception e){
+			e.printStackTrace();
 		}
 	}
 
@@ -277,6 +320,8 @@ public class Tag extends AbstractRender {
 							renderArray(ctx, (Object[]) obj);
 						} else if (isBean(obj)) {
 							renderObject(ctx, obj);
+						} else if(obj instanceof Iterator){
+							renderIterator(ctx, (Iterator<?>)obj);
 						}
 					}
 				} else {
