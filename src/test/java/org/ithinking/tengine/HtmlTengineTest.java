@@ -7,9 +7,8 @@ import org.ithinking.tengine.core.Configuration;
 import org.ithinking.tengine.core.Context;
 import org.ithinking.tengine.core.Loader;
 import org.ithinking.tengine.core.Template;
-import org.ithinking.tengine.core.TemplateManager;
+import org.ithinking.tengine.core.TemplateEngine;
 import org.ithinking.tengine.html.parser.HtmlParser;
-import org.ithinking.tengine.loader.ClasspathLoader;
 import org.ithinking.tengine.loader.LoaderFactory;
 import org.junit.Test;
 
@@ -36,7 +35,7 @@ public class HtmlTengineTest {
 		userList.add(new User("路人甲", 40, "lurenjia@xin.com", "广东广州"));
 
 		// Context context
-		TemplateManager manager = new TemplateManager(loader, conf, parser);
+		TemplateEngine manager = new TemplateEngine(loader, conf, parser);
 		Context context = new DefContext(manager);
 		Template template = context.loadTemplate("index.html");
 		context.add("title", "this is test").add("queryUrl", "http://localhost").add("userList", userList)

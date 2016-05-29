@@ -3,17 +3,14 @@ package org.ithinking.tengine;
 import org.ithinking.tengine.core.Configuration;
 import org.ithinking.tengine.core.Loader;
 import org.ithinking.tengine.core.Template;
-import org.ithinking.tengine.core.TemplateManager;
+import org.ithinking.tengine.core.TemplateEngine;
 import org.ithinking.tengine.html.parser.HtmlParser;
-import org.ithinking.tengine.loader.ClasspathLoader;
-import org.ithinking.tengine.loader.FilepathLoader;
 import org.ithinking.tengine.loader.LoaderFactory;
 import org.springframework.web.context.support.WebApplicationObjectSupport;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
 
 import javax.servlet.ServletContext;
-import java.io.File;
 import java.util.Locale;
 
 /**
@@ -22,7 +19,10 @@ import java.util.Locale;
 //  org.springframework.web.servlet.view.AbstractCachingViewResolver
 public class TengineViewResolver extends WebApplicationObjectSupport implements ViewResolver, org.springframework.core.Ordered {
 
-    private TemplateManager manager = null;
+    public static final String REDIRECT_URL_PREFIX = "redirect:";
+    public static final String FORWARD_URL_PREFIX = "forward:";
+
+    private TemplateEngine manager = null;
 
     private String prefix;
     private String suffix;
@@ -79,7 +79,7 @@ public class TengineViewResolver extends WebApplicationObjectSupport implements 
         //
         Loader loader = LoaderFactory.createLoader(conf);
         HtmlParser parser = new HtmlParser();
-        manager = new TemplateManager(loader, conf, parser);
+        manager = new TemplateEngine(loader, conf, parser);
     }
 
 

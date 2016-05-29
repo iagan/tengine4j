@@ -2,7 +2,7 @@ package org.ithinking.tengine;
 
 import org.ithinking.tengine.core.Context;
 import org.ithinking.tengine.core.Template;
-import org.ithinking.tengine.core.TemplateManager;
+import org.ithinking.tengine.core.TemplateEngine;
 import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,13 +14,13 @@ import java.util.Map;
  */
 public class TengineView implements View {
 
-    private TemplateManager manager = null;
+    private TemplateEngine engine = null;
     private Template template = null;
     public static final String DEFAULT_CONTENT_TYPE = "text/html;charset=UTF-8";
     private String charset = null;
 
-    public TengineView(Template template, TemplateManager manager) {
-        this.manager = manager;
+    public TengineView(Template template, TemplateEngine engine) {
+        this.engine = engine;
         this.template = template;
     }
 
@@ -31,7 +31,7 @@ public class TengineView implements View {
 
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        Context context = new HttpServletRequestContext(manager, request, response, charset);
+        Context context = new HttpServletRequestContext(engine, request, response, charset);
         context.putAll(model);
         if (template != null) {
             template.render(context);

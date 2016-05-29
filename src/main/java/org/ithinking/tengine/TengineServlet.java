@@ -2,7 +2,6 @@ package org.ithinking.tengine;
 
 import org.ithinking.tengine.core.*;
 import org.ithinking.tengine.html.parser.HtmlParser;
-import org.ithinking.tengine.loader.ClasspathLoader;
 import org.ithinking.tengine.loader.LoaderFactory;
 
 import javax.servlet.*;
@@ -15,7 +14,7 @@ import java.io.IOException;
  */
 public class TengineServlet implements Servlet {
 
-    private TemplateManager manager = null;
+    private TemplateEngine engine = null;
 
     private ServletConfig servletConfig;
 
@@ -51,7 +50,7 @@ public class TengineServlet implements Servlet {
 
         Loader loader = LoaderFactory.createLoader(conf);
         HtmlParser parser = new HtmlParser();
-        manager = new TemplateManager(loader, conf, parser);
+        engine = new TemplateEngine(loader, conf, parser);
     }
 
     @Override
@@ -66,7 +65,7 @@ public class TengineServlet implements Servlet {
         }
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
-        Context context = new HttpServletRequestContext(manager, request, response, conf.getViewCharset());
+        Context context = new HttpServletRequestContext(engine, request, response, conf.getViewCharset());
         String path = request.getServletPath();
         Template template = context.loadTemplate(path);
         if (template != null) {

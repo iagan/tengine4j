@@ -2,7 +2,7 @@ package org.ithinking.tengine;
 
 import org.ithinking.tengine.core.Context;
 import org.ithinking.tengine.core.Template;
-import org.ithinking.tengine.core.TemplateManager;
+import org.ithinking.tengine.core.TemplateEngine;
 
 import java.nio.charset.Charset;
 import java.util.HashMap;
@@ -12,23 +12,23 @@ public class DefContext extends HashMap<String, Object> implements Context {
 
 
     private Charset charset = Charset.forName("UTF-8");
-    private TemplateManager manager;
+    private TemplateEngine engine;
     private Locale locale;
 
-    public DefContext(TemplateManager manager) {
+    public DefContext(TemplateEngine engine) {
         super();
-        this.manager = manager;
+        this.engine = engine;
     }
 
-    public DefContext(TemplateManager manager, int initialCapacity, float loadFactor) {
+    public DefContext(TemplateEngine engine, int initialCapacity, float loadFactor) {
         super(initialCapacity, loadFactor);
-        this.manager = manager;
+        this.engine = engine;
     }
 
 
-    public DefContext(TemplateManager manager, int initialCapacity) {
+    public DefContext(TemplateEngine engine, int initialCapacity) {
         super(initialCapacity);
-        this.manager = manager;
+        this.engine = engine;
     }
 
     @Override
@@ -76,6 +76,6 @@ public class DefContext extends HashMap<String, Object> implements Context {
 
     @Override
     public Template loadTemplate(String path) {
-        return manager.getTemplate(path, locale);
+        return engine.getTemplate(path, locale);
     }
 }

@@ -9,7 +9,7 @@ import java.util.Map;
 import org.ithinking.tengine.html.Document;
 import org.ithinking.tengine.html.parser.HtmlParser;
 
-public class TemplateManager {
+public class TemplateEngine {
 
     private static Map<String, Template> TEMPLATES = new HashMap<String, Template>();
 
@@ -17,7 +17,7 @@ public class TemplateManager {
     private HtmlParser parser;
     private Configuration conf;
 
-    public TemplateManager(Loader loader, Configuration conf, HtmlParser parser) {
+    public TemplateEngine(Loader loader, Configuration conf, HtmlParser parser) {
         this.conf = conf;
         this.loader = loader;
         this.parser = parser;

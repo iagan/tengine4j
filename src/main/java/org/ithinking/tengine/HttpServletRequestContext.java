@@ -1,18 +1,14 @@
 package org.ithinking.tengine;
 
 import org.ithinking.tengine.core.Context;
-import org.ithinking.tengine.core.TemplateManager;
+import org.ithinking.tengine.core.TemplateEngine;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author agan
@@ -23,8 +19,8 @@ public class HttpServletRequestContext extends DefContext {
     private HttpServletResponse response;
     private Charset charset = Charset.forName("UTF-8");
 
-    public HttpServletRequestContext(TemplateManager manager, HttpServletRequest request, HttpServletResponse response, String charset) {
-        super(manager);
+    public HttpServletRequestContext(TemplateEngine engine, HttpServletRequest request, HttpServletResponse response, String charset) {
+        super(engine);
         this.request = request;
         this.response = response;
         if(charset != null && !charset.trim().isEmpty()){
