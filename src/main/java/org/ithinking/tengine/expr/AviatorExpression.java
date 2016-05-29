@@ -1,5 +1,6 @@
 package org.ithinking.tengine.expr;
 
+import org.apache.commons.beanutils.NestedNullException;
 import org.ithinking.tengine.core.Context;
 
 import com.googlecode.aviator.AviatorEvaluator;
@@ -21,7 +22,16 @@ public class AviatorExpression extends ExpressionSupport {
 			val = compileExpression.execute(context);
 		}catch (NullPointerException e){
 
-		}
+		}catch (NestedNullException e){
+
+        }catch (Exception e){
+            String msg = e.getMessage();
+            if(msg != null && msg.indexOf("Could not find variable") != -1){
+
+            }else {
+                throw new RuntimeException(e);
+            }
+        }
 		return val;
 	}
 
