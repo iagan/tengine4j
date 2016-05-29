@@ -88,7 +88,7 @@ public class HttpServletRequestContext extends DefContext {
 
     @Override
     public Context writeHeader(String name, String value){
-        System.out.println(name + ": " + value);
+        response.addHeader(name, value);
         return this;
     }
 }
