@@ -4,7 +4,7 @@ import org.ithinking.tengine.core.Context;
 
 import com.googlecode.aviator.AviatorEvaluator;
 
-public class AviatorExpression implements Expression {
+public class AviatorExpression extends ExpressionSupport {
 
 	private String expression = null;
 	private com.googlecode.aviator.Expression compileExpression;

@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.ithinking.tengine.core.Context;
 
-public class CompositeExpression implements Expression {
+public class CompositeExpression extends ExpressionSupport {
 
 	private List<Expression> exprList;
 

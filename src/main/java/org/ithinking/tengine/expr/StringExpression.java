@@ -2,7 +2,7 @@ package org.ithinking.tengine.expr;
 
 import org.ithinking.tengine.core.Context;
 
-public class StringExpression implements Expression {
+public class StringExpression extends ExpressionSupport {
 
 	private String value;
 
