@@ -34,18 +34,16 @@ public class HttpServletRequestContext extends DefContext {
         Object value = null;
         String strKey = key.toString();
         char first = strKey.charAt(0);
-        char last = strKey.charAt(strKey.length() - 1);
-        if (first == '&') { // 获取请求参数
-            if (last == ']') {
-                int pos = strKey.indexOf("[");
-                strKey = pos != -1 ? strKey.substring(1, pos) : strKey.substring(1, strKey.length() - 1);
-                value = request.getParameterValues(strKey);
+        char second = strKey.length() > 1 ? strKey.charAt(1) : ' ';
+        if (first == '$') { // 获取请求参数
+            if (second == '$') {
+                value = request.getParameterValues(strKey.substring(2));
             } else {
                 value = request.getParameter(strKey.substring(1));
             }
-        } else if (first == '#') { // 获取Cookie
+        } else if (first == '_') { // 获取Cookie
             Cookie[] cookies = request.getCookies();
-            if (last == ']') {
+            if (second == '_') {
                 value = cookies;
             } else {
                 strKey = strKey.substring(1);
