@@ -9,6 +9,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author agan
@@ -29,31 +32,36 @@ public class HttpServletRequestContext extends DefContext {
     }
 
 
+    /**
+     * Parameter : $P_name, $PARAMS
+     * Cookie: $C_name, $COOKIES
+     * Header : $H_, $HEADERS
+     *
+     * @param key
+     * @return
+     */
     @Override
     public Object get(Object key) {
-
         String strKey = key.toString();
         Object value = super.get(strKey);
         if (value == null) {
             char first = strKey.charAt(0);
             if (first == '$') { // 获取请求参数
-                if (strKey.length() > 1 && strKey.charAt(1) == '$') {
-                    value = request.getParameterValues(strKey.substring(2));
-                } else {
-                    value = request.getParameter(strKey.substring(1));
-                }
-            } else if (first == '_') { // 获取Cookie
-                Cookie[] cookies = request.getCookies();
-                if (strKey.length() > 1 && strKey.charAt(1) == '_') {
-                    value = cookies;
-                } else {
-                    strKey = strKey.substring(1);
-                    for (Cookie c : cookies) {
-                        if (strKey.equals(c.getName())) {
-                            value = c;
-                            break;
-                        }
+                if (strKey.indexOf("_") == 2) {
+                    char second = strKey.charAt(1);
+                    if (second == 'P') {
+                        value = request.getParameter(strKey.substring(3));
+                    } else if (second == 'C') {
+                        value = findCookie(request.getCookies(), strKey.substring(3));
+                    } else if (second == 'H') {
+                        value = request.getHeader(strKey.substring(3));
                     }
+                } else if ("$PARAMS".equals(strKey)) {
+                    value = request.getParameterMap();
+                } else if ("$COOKIES".equals(strKey)) {
+                    value = request.getCookies();
+                } else if ("$HEADERS".equals(strKey)) {
+                    value = getHeaderMap();
                 }
             } else {
                 value = request.getAttribute(strKey);
@@ -69,6 +77,30 @@ public class HttpServletRequestContext extends DefContext {
             }
         }
         return value;
+    }
+
+    private Cookie findCookie(Cookie[] cookies, String name) {
+        if (cookies != null) {
+            for (Cookie c : cookies) {
+                if (c.getName().equals(name)) {
+                    return c;
+                }
+            }
+        }
+        return null;
+    }
+
+    private Map<String, Object> getHeaderMap() {
+        Enumeration<String> names = request.getHeaderNames();
+        Map<String, Object> headers = new HashMap<>();
+        if (names != null) {
+            String name;
+            while (names.hasMoreElements()) {
+                name = names.nextElement();
+                headers.put(name, request.getHeader(name));
+            }
+        }
+        return headers;
     }
 
     @Override
