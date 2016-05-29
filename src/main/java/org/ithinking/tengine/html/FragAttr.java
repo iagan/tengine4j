@@ -3,6 +3,7 @@ package org.ithinking.tengine.html;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ithinking.tengine.core.Configuration;
 import org.ithinking.tengine.core.Param;
 import org.ithinking.tengine.expr.Expression;
 
@@ -42,6 +43,13 @@ public class FragAttr extends Attr {
 			params = new ArrayList<Param>();
 		}
 		params.add(param);
+	}
+
+	@Override
+	protected void innerInit(Configuration conf) {
+		if(this.fragid != null){
+			this.fragid.init(conf);
+		}
 	}
 
 	public Expression getFragid() {
