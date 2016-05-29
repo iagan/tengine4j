@@ -76,34 +76,44 @@ public class HttpServletRequestContext extends DefContext {
 
     @Override
     public Context write(String s) {
-        write(s.getBytes(charset));
+        if(s != null) {
+            write(s.getBytes(charset));
+        }
         return this;
     }
 
     @Override
     public Context write(String s, int start, int len) {
-        s = s.substring(start, start + len);
-        write(s);
+        if(s != null) {
+            s = s.substring(start, start + len);
+            write(s);
+        }
         return this;
     }
 
     @Override
     public Context write(char[] values, int start, int len) {
-        String ss = new String(values, start, len);
-        write(ss.getBytes(charset));
+        if(values != null && values.length != 0) {
+            String ss = new String(values, start, len);
+            write(ss.getBytes(charset));
+        }
         return this;
     }
 
     @Override
     public Context write(byte[] bytes){
-        write(bytes, 0, bytes.length);
+        if(bytes != null && bytes.length > 0) {
+            write(bytes, 0, bytes.length);
+        }
         return this;
     }
 
     @Override
     public Context write(byte[] bytes, int start, int len){
         try{
-            response.getOutputStream().write(bytes, start, len);
+            if(bytes != null && bytes.length > 0) {
+                response.getOutputStream().write(bytes, start, len);
+            }
         }catch (IOException e){
             throw new RuntimeException(e);
         }
