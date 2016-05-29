@@ -51,12 +51,16 @@ public class HttpServletRequestContext extends DefContext {
                     char second = strKey.charAt(1);
                     if (second == 'P') {
                         value = request.getParameter(strKey.substring(3));
+                    } else if (second == 'A') {
+                        value = request.getParameterValues(strKey.substring(3));
                     } else if (second == 'C') {
                         value = findCookie(request.getCookies(), strKey.substring(3));
                     } else if (second == 'H') {
                         value = request.getHeader(strKey.substring(3));
                     }
                 } else if ("$PARAMS".equals(strKey)) {
+                    value = getSingleValueParameterMap();
+                } else if ("PARAMETERS".equals(strKey)) {
                     value = request.getParameterMap();
                 } else if ("$COOKIES".equals(strKey)) {
                     value = request.getCookies();
@@ -101,6 +105,18 @@ public class HttpServletRequestContext extends DefContext {
             }
         }
         return headers;
+    }
+
+    private Map<String, String> getSingleValueParameterMap() {
+        Enumeration<String> names = request.getParameterNames();
+        Map<String, String> params = new HashMap<>();
+        if (names != null) {
+            while (names.hasMoreElements()) {
+                String name = names.nextElement();
+                params.put(name, request.getParameter(name));
+            }
+        }
+        return params;
     }
 
     @Override
