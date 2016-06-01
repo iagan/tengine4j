@@ -44,6 +44,17 @@ public class HtmlTengineTest {
 		template.render(context);
 	}
 
+	@Test
+	public void testRenderPage(){
+		Configuration conf = Configuration.newConfiguration();
+		Loader loader = LoaderFactory.createLoader(conf);
+		HtmlParser parser = new HtmlParser();
+		TemplateEngine manager = new TemplateEngine(loader, conf, parser);
+		Context context = new DefContext(manager);
+		Template template = context.loadTemplate("page.html");
+		template.render(context);
+	}
+
 	public static class User {
 		private Long id;
 		private String name;
