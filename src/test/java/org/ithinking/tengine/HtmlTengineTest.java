@@ -52,7 +52,7 @@ public class HtmlTengineTest {
         HtmlParser parser = new HtmlParser();
         TemplateEngine manager = new TemplateEngine(loader, conf, parser);
         Context context = new DefContext(manager);
-        Template template = context.loadTemplate("templates/page.html");
+        Template template = context.loadTemplate("page.html");
         template.render(context);
     }
 

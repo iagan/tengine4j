@@ -165,7 +165,7 @@ public class TagParser {
 		// name [tg-repeat-user; data-tg-repeat-user; tg:repeat-user]
 		String directiveName = getDirectiveName(declareName);
 		String directiveParam = getDirectiveParam(directiveName, declareName);
-		Attr attr = createAttr(directiveName);
+		Attr attr = createAttr(directiveName, declareName);
 		attr.setParam(directiveParam);
 		if (hasAttrValue()) {
 			readAttrValue(attr);
@@ -177,19 +177,22 @@ public class TagParser {
 	 * 根据指令名称创建指令
 	 * 
 	 * @param directiveName
+	 * @param declareName  [tg-repeat-user; data-tg-repeat-user; tg:repeat-user]
 	 */
-	private Attr createAttr(String directiveName) {
+	private Attr createAttr(String directiveName, String declareName) {
 		Attr attr = null;
 		if (directiveName.equalsIgnoreCase(DIRECTIVE.FRAG.getDirectiveName())) {
 			attr = new FragAttr(directiveName);
 			attr.setType(DIRECTIVE.FRAG);
 		} else {
 			attr = new Attr(directiveName);
-			attr.setType(DIRECTIVE.ANY_ATTR);
-			for (DIRECTIVE directive : DIRECTIVE.values()) {
-				if (directiveName.equalsIgnoreCase(directive.name())) {
-					attr.setType(directive);
-					break;
+			attr.setType(DIRECTIVE.ANY_ATTR); // 默认为普通属性
+			if(declareName.startsWith("data-tg-") || declareName.startsWith("tg:")) {  // 指令
+				for (DIRECTIVE directive : DIRECTIVE.values()) {
+					if (directiveName.equalsIgnoreCase(directive.name())) {
+						attr.setType(directive);
+						break;
+					}
 				}
 			}
 		}

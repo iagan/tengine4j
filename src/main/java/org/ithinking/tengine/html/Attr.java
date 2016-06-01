@@ -34,10 +34,12 @@ public class Attr extends AbstractRender {
 
     @Override
     protected void innerInit(Configuration conf) {
-        if (valueExpression == null) {
-            valueExpression = ExpressionFactory.createExpression(value, valueType != 0);
-            if (valueExpression != null) {
-                valueExpression.init(conf);
+        if(this.type != DIRECTIVE.ANY_ATTR) {
+            if (valueExpression == null) {
+                valueExpression = ExpressionFactory.createExpression(value, valueType != 0);
+                if (valueExpression != null) {
+                    valueExpression.init(conf);
+                }
             }
         }
     }
@@ -48,8 +50,12 @@ public class Attr extends AbstractRender {
      * @param ctx
      */
     public void renderValue(Context ctx) {
-        if (valueExpression != null) {
-            valueExpression.executeAndWrite(ctx);
+        if(this.type == DIRECTIVE.ANY_ATTR) {
+            ctx.write(value);
+        }else {
+            if (valueExpression != null) {
+                valueExpression.executeAndWrite(ctx);
+            }
         }
     }
 
