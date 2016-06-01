@@ -62,9 +62,6 @@ public class HtmlScanner extends TextScanner {
 	}
 
 	public void start() {
-        if(XString.isBlank(this.text)){
-            return;
-        }
 		handler.start();
 		int ch = next();
 		if (ch != '\uFEFF') { // skip leading BOM

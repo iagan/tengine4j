@@ -1,13 +1,11 @@
 package org.ithinking.tengine.core;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import org.ithinking.tengine.html.Document;
+import org.ithinking.tengine.html.parser.HtmlParser;
+
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-
-import org.ithinking.tengine.html.Document;
-import org.ithinking.tengine.html.parser.HtmlParser;
 
 public class TemplateEngine {
 
