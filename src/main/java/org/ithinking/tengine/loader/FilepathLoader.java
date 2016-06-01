@@ -22,15 +22,16 @@ public class FilepathLoader extends AbstractLoader{
 		Resource res = null;
 		if(file != null){
 			String text = load(file, encoding);
-			res = new Resource();
-			res.setPath(file.getAbsolutePath());
-			res.setId(templateId);
-			res.setText(text);
-			res.setPath(file.getAbsolutePath());
-			res.setLastModified(file.lastModified());
+            if(text != null) {
+                res = new Resource();
+                res.setPath(file.getAbsolutePath());
+                res.setId(templateId);
+                res.setText(text);
+                res.setPath(file.getAbsolutePath());
+                res.setLastModified(file.lastModified());
+            }
 		}
 		return res;
 	}
-	
 
 }

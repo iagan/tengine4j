@@ -5,6 +5,7 @@ import static java.lang.Character.isLetter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ithinking.tengine.XString;
 import org.ithinking.tengine.core.TAG;
 import org.ithinking.tengine.core.TextScanner;
 
@@ -61,6 +62,9 @@ public class HtmlScanner extends TextScanner {
 	}
 
 	public void start() {
+        if(XString.isBlank(this.text)){
+            return;
+        }
 		handler.start();
 		int ch = next();
 		if (ch != '\uFEFF') { // skip leading BOM
