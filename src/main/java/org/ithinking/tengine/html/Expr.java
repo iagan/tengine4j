@@ -21,6 +21,9 @@ public class Expr extends AbstractRender {
 	@Override
 	public void render(Context context) {
 		Object result = expression.execute(context);
+        if(result instanceof Expression){
+            result = ((Expression)result).execute(context);
+        }
 		context.write(result == null ? null : result.toString());
 	}
 }

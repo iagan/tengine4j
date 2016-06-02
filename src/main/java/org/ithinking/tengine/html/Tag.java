@@ -8,12 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.ithinking.tengine.Indicator;
-import org.ithinking.tengine.core.AbstractRender;
-import org.ithinking.tengine.core.Configuration;
-import org.ithinking.tengine.core.Context;
-import org.ithinking.tengine.core.DIRECTIVE;
-import org.ithinking.tengine.core.TAG;
-import org.ithinking.tengine.core.Template;
+import org.ithinking.tengine.core.*;
 import org.ithinking.tengine.expr.Expression;
 import org.ithinking.tengine.expr.ExpressionFactory;
 
@@ -153,6 +148,15 @@ public class Tag extends AbstractRender {
         if (refDoc == null) {
             throw new RuntimeException("template is not exists.");
         }
+
+        // 处理请求参数，放入上下文中
+        List<Param> params = fragAttr.getParams();
+        if (params != null && !params.isEmpty()) {
+            for (Param param : params){
+                ctx.add(param.getName(), param.getValue(ctx));
+            }
+        }
+
 
         String targetFragId = fragAttr.getFragid() == null ? null : fragAttr.getFragid().executeForString(ctx);
         boolean bodyOnly = fragAttr.isBodyOnly();

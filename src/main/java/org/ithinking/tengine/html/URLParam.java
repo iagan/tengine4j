@@ -25,7 +25,7 @@ public class URLParam implements Param {
 
 	@Override
 	public Object getValue(Context ctx) {
-		return value;
+		return value == null ? null : value.execute(ctx);
 	}
 
 }

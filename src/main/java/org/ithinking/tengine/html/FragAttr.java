@@ -45,6 +45,10 @@ public class FragAttr extends Attr {
 		params.add(param);
 	}
 
+    public List<Param> getParams(){
+        return this.params;
+    }
+
 	@Override
 	protected void innerInit(Configuration conf) {
 		if(this.fragid != null){
