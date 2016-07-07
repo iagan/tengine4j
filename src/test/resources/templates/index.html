@@ -56,7 +56,7 @@
 			<td>否</td>
 			<td>详情</td>
 		</tr>
-		<tr data-tg-repeat-user="userList" data-tg-continue="$stat.even" data-tg-if="showList">
+		<tr data-tg-repeat-user="userList" data-tg-continue="$stat.even" data-tg-if="showList" age="${user.age}">
 			<td class="333" data-tg-class="'cls1'" data-tg-class-1="'cls2'" data-tg-title="'haha'">${$stat.row}</td>
 			<td data-tg-href="http://loaclahost:8080/${user.name}/${user.age}">${user.name}</td>
 			<td data-tg-selected="user.age > 20">${user.age}</td>
