@@ -34,14 +34,22 @@ public class Attr extends AbstractRender {
 
     @Override
     protected void innerInit(Configuration conf) {
-        if(this.type != DIRECTIVE.ANY_ATTR) {
+        if (this.type != DIRECTIVE.ANY_ATTR) {
             if (valueExpression == null) {
                 valueExpression = ExpressionFactory.createExpression(value, valueType != 0);
                 if (valueExpression != null) {
                     valueExpression.init(conf);
                 }
             }
+        }else if(valueIsExpr()){
+            valueExpression = ExpressionFactory.createExpression(value, true);
         }
+    }
+
+    // 判断值是否为表达式
+    private boolean valueIsExpr() {
+        int i = this.value == null ? -1 : this.value.indexOf("${");
+        return i != -1 && this.value.indexOf('}', i + 1) != -1;
     }
 
     /**
@@ -50,13 +58,21 @@ public class Attr extends AbstractRender {
      * @param ctx
      */
     public void renderValue(Context ctx) {
-        if(this.type == DIRECTIVE.ANY_ATTR) {
+        if (valueExpression != null) {
+            valueExpression.executeAndWrite(ctx);
+        }else{
             ctx.write(value);
-        }else {
+        }
+
+        /**
+        if (this.type == DIRECTIVE.ANY_ATTR) {
+            ctx.write(value);
+        } else {
             if (valueExpression != null) {
                 valueExpression.executeAndWrite(ctx);
             }
         }
+         **/
     }
 
     public String getName() {

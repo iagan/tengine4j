@@ -13,6 +13,12 @@ public class AnyTest {
 		System.out.println(name);
 	}
 
+    @Test
+    public void testJavaString(){
+        String s = "skfjskdjf";
+        //String s2 = new String(s, 0, 2);
+    }
+
 	@Test
 	public void testReplaceAll(){
 		String parent = "d:\\doc/777//9889\\909090\\\\989898////7777//5555\\\\\\\\";

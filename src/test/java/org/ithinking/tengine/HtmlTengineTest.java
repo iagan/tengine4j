@@ -46,6 +46,17 @@ public class HtmlTengineTest {
     }
 
     @Test
+    public void testValue(){
+        System.out.println(valueIsExpr("${user.name}"));
+    }
+
+    // 判断值是否为表达式
+    private boolean valueIsExpr(String value) {
+        int i = value == null ? -1 : value.indexOf("${");
+        return i != -1 && value.indexOf('}', i + 1) != -1;
+    }
+
+    @Test
     public void testRenderPage() {
         Configuration conf = Configuration.newConfiguration();
         Loader loader = LoaderFactory.createLoader(conf);
