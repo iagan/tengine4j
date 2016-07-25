@@ -41,6 +41,7 @@ public class HtmlTengineTest {
         Template template = context.loadTemplate("index.html");
         context.add("title", "this is test").add("queryUrl", "http://localhost").add("userList", userList)
                 .add("admin", admin).add("showList", true);
+        context.add("radio", true).add("checkbox", false);
 
         template.render(context);
     }
