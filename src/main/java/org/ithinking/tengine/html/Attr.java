@@ -26,10 +26,45 @@ public class Attr extends AbstractRender {
         this.name = name;
     }
 
+    private boolean isBlank(String src) {
+        int len = src == null ? 0 : src.length();
+        if (len > 0) {
+            for (int i = 0; i < len; i++) {
+                if (!Character.isWhitespace(src.charAt(i))) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean isTrue(Object obj) {
+        if (obj == null) {
+            return false;
+        } else if (obj instanceof Boolean) {
+            return (Boolean) obj;
+        } else if (obj instanceof Number) {
+            return ((Number) obj).intValue() != 0;
+        } else if (obj instanceof String) {
+            String val = obj.toString();
+            if (isBlank(val) || "0".equals(val) || "false".equals(val)) {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public void render(Context ctx) {
         if (isChecked || isSelected) {
-
+            Object val = valueExpression.execute(ctx);
+            if (isTrue(ctx)) {
+                ctx.write(" ").write(isChecked ? "checked" : "selected");
+            } else {
+                ctx.write(" ").write(this.name).write("=");
+                ctx.write(getStrChar()).write(val == null ? "" : val.toString()).write(getStrChar());
+            }
         } else {
             ctx.write(" ").write(this.name).write("=");
             ctx.write(getStrChar());
@@ -41,8 +76,6 @@ public class Attr extends AbstractRender {
     @Override
     protected void innerInit(Configuration conf) {
         if (this.type != DIRECTIVE.ANY_ATTR) { // 非指令
-            this.isChecked = "checked".equalsIgnoreCase(this.name);
-            this.isSelected = "selected".equalsIgnoreCase(this.name);
             if (valueExpression == null) {
                 valueExpression = ExpressionFactory.createExpression(value, valueType != 0);
                 if (valueExpression != null) {
@@ -51,6 +84,11 @@ public class Attr extends AbstractRender {
             }
         } else if (valueIsExpr()) { // 指令
             valueExpression = ExpressionFactory.createExpression(value, true);
+        }
+
+        if (valueExpression != null) {
+            this.isChecked = "checked".equalsIgnoreCase(this.name);
+            this.isSelected = "selected".equalsIgnoreCase(this.name);
         }
     }
 
