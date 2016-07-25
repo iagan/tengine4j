@@ -61,9 +61,6 @@ public class Attr extends AbstractRender {
             Object val = valueExpression.execute(ctx);
             if (isTrue(val)) {
                 ctx.write(" ").write(isChecked ? "checked" : "selected");
-            } else {
-                ctx.write(" ").write(this.name).write("=");
-                ctx.write(getStrChar()).write(val == null ? "" : val.toString()).write(getStrChar());
             }
         } else {
             ctx.write(" ").write(this.name).write("=");
