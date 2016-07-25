@@ -15,6 +15,8 @@ public class Attr extends AbstractRender {
     private DIRECTIVE type;
     private int valueType = 0;
     private Expression valueExpression;
+    private boolean isChecked = false;
+    private boolean isSelected = false;
 
     public Attr() {
 
@@ -26,22 +28,28 @@ public class Attr extends AbstractRender {
 
     @Override
     public void render(Context ctx) {
-        ctx.write(" ").write(this.name).write("=");
-        ctx.write(getStrChar());
-        renderValue(ctx);
-        ctx.write(getStrChar());
+        if (isChecked || isSelected) {
+
+        } else {
+            ctx.write(" ").write(this.name).write("=");
+            ctx.write(getStrChar());
+            renderValue(ctx);
+            ctx.write(getStrChar());
+        }
     }
 
     @Override
     protected void innerInit(Configuration conf) {
-        if (this.type != DIRECTIVE.ANY_ATTR) {
+        if (this.type != DIRECTIVE.ANY_ATTR) { // 非指令
+            this.isChecked = "checked".equalsIgnoreCase(this.name);
+            this.isSelected = "selected".equalsIgnoreCase(this.name);
             if (valueExpression == null) {
                 valueExpression = ExpressionFactory.createExpression(value, valueType != 0);
                 if (valueExpression != null) {
                     valueExpression.init(conf);
                 }
             }
-        }else if(valueIsExpr()){
+        } else if (valueIsExpr()) { // 指令
             valueExpression = ExpressionFactory.createExpression(value, true);
         }
     }
@@ -60,18 +68,18 @@ public class Attr extends AbstractRender {
     public void renderValue(Context ctx) {
         if (valueExpression != null) {
             valueExpression.executeAndWrite(ctx);
-        }else{
+        } else {
             ctx.write(value);
         }
 
         /**
-        if (this.type == DIRECTIVE.ANY_ATTR) {
-            ctx.write(value);
-        } else {
-            if (valueExpression != null) {
-                valueExpression.executeAndWrite(ctx);
-            }
-        }
+         if (this.type == DIRECTIVE.ANY_ATTR) {
+         ctx.write(value);
+         } else {
+         if (valueExpression != null) {
+         valueExpression.executeAndWrite(ctx);
+         }
+         }
          **/
     }
 
