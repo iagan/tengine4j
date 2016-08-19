@@ -114,4 +114,18 @@ public class XString {
 	public static boolean isNotBlank(String src){
 		return !isBlank(src);
 	}
+
+
+	public static String makeUrl(String ip, String uri) {
+		StringBuilder sb = new StringBuilder(ip.length() + uri.length() + 30);
+		if (uri == "/") {
+			uri = "/index.html";
+		}
+		if (ip.startsWith("http")) {
+			sb.append(ip).append(uri.startsWith("/") ? "" : "/").append(uri).append(uri.endsWith(".html") ? "" : ".html");
+		} else {
+			sb.append("http://").append(ip).append(uri.startsWith("/") ? "" : "/").append(uri).append(uri.endsWith(".html") ? "" : ".html");
+		}
+		return sb.toString();
+	}
 }

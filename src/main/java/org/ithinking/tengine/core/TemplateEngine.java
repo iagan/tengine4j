@@ -11,15 +11,16 @@ public class TemplateEngine {
 
     private static Map<String, Template> TEMPLATES = new HashMap<String, Template>();
 
-    private Loader loader;
-    private HtmlParser parser;
-    private Configuration conf;
+    protected Loader loader;
+    protected HtmlParser parser;
+    protected Configuration conf;
 
     public TemplateEngine(Loader loader, Configuration conf, HtmlParser parser) {
         this.conf = conf;
         this.loader = loader;
         this.parser = parser;
     }
+
 
     public Template getTemplate(String id, Locale locale) {
         Template tpl = TEMPLATES.get(id);

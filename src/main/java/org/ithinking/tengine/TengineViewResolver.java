@@ -1,9 +1,6 @@
 package org.ithinking.tengine;
 
-import org.ithinking.tengine.core.Configuration;
-import org.ithinking.tengine.core.Loader;
-import org.ithinking.tengine.core.Template;
-import org.ithinking.tengine.core.TemplateEngine;
+import org.ithinking.tengine.core.*;
 import org.ithinking.tengine.html.parser.HtmlParser;
 import org.ithinking.tengine.loader.LoaderFactory;
 import org.springframework.web.context.support.WebApplicationObjectSupport;
@@ -36,6 +33,8 @@ public class TengineViewResolver extends WebApplicationObjectSupport implements 
     private String suffix;
     private String charset;
     private String docBase;
+    private boolean remoteView = false;
+    private Configuration conf;
 
     public String getDocBase() {
         return docBase;
@@ -69,10 +68,18 @@ public class TengineViewResolver extends WebApplicationObjectSupport implements 
         this.charset = charset;
     }
 
+    public boolean isRemoteView() {
+        return remoteView;
+    }
+
+    public void setRemoteView(boolean remoteView) {
+        this.remoteView = remoteView;
+    }
+
     @Override
     protected void initServletContext(ServletContext servletContext) {
         super.initServletContext(servletContext);
-        Configuration conf = Configuration.newConfiguration();
+        conf = Configuration.newConfiguration();
         //
         this.docBase = XString.defVal(this.docBase, servletContext.getRealPath(servletContext.getContextPath()));
         this.charset = XString.defVal(this.charset, conf.getViewCharset(), "UTF-8");
@@ -83,11 +90,13 @@ public class TengineViewResolver extends WebApplicationObjectSupport implements 
         conf.setViewCharset(this.charset);
         conf.setViewPrefix(this.prefix);
         conf.setViewSuffix(this.suffix);
-
         //
         Loader loader = LoaderFactory.createLoader(conf);
         HtmlParser parser = new HtmlParser();
-        manager = new TemplateEngine(loader, conf, parser);
+        if (!this.isRemoteView()) {
+            // 非远程视图，即本地视图
+            manager = new TemplateEngine(loader, conf, parser);
+        }
     }
 
 
@@ -114,12 +123,23 @@ public class TengineViewResolver extends WebApplicationObjectSupport implements 
             return new InternalResourceView(forwardUrl);
         }
 
+        if (this.isRemoteView()) {
+            return this.resolveRemoteView(viewName, locale);
+        } else {
+            return resolveLocalView(viewName, locale);
+        }
+    }
 
+    private View resolveRemoteView(String viewName, Locale locale) {
+        return new RemoteTengineView(locale, viewName, conf);
+    }
+
+    private View resolveLocalView(String viewName, Locale locale) {
         Template template = manager.getTemplate(viewName, locale);
         View view = null;
         if (template != null) {
             if (template.getBindingView() == null) {
-                template.setBindingView(new TengineView(template, manager));
+                template.setBindingView(new TengineView(template, manager, locale));
             }
             if (!(template.getBindingView() instanceof View)) {
                 throw new RuntimeException("BindingView is not a spring View.");

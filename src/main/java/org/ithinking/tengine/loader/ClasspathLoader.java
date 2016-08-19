@@ -34,7 +34,6 @@ public class ClasspathLoader extends AbstractLoader {
                     res.setLastModified(file.lastModified());
                 }
             }
-
         }
         return res;
     }

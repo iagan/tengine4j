@@ -18,6 +18,8 @@ public class LoaderFactory {
         Loader loader;
         if (prefix.toLowerCase().indexOf("classpath:") == 0) {
             loader = new ClasspathLoader(prefix.substring("classpath:".length()), charset);
+        } else if (prefix.toLowerCase().startsWith("http")) {
+            loader = new ProxyLoader(prefix, charset);
         } else {
             loader = new FilepathLoader(XString.makePath(configuration.getViewDocBase(), prefix), charset);
         }
