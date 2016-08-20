@@ -118,7 +118,7 @@ public class XString {
 
     public static String makeUrl(String ip, String uri) {
         StringBuilder sb = new StringBuilder(ip.length() + uri.length() + 30);
-        if (uri == "/") {
+        if (uri == null || uri.isEmpty() || "/".equals(uri)) {
             uri = "/index.html";
         }
         if (!ip.startsWith("http://") && !ip.startsWith("https://")) {

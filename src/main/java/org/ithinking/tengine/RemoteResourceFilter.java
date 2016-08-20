@@ -89,7 +89,7 @@ public class RemoteResourceFilter implements Filter {
             } catch (FileNotFoundException e) {
                 // e.printStackTrace();
                 // 对于未找到的资源，可以直接穿透使用服务器的资源
-                logger.info("[REMOTE_URL]: not find={}", remoteBaseUrl);
+                logger.error("[REMOTE_URL]: not find={}", remoteBaseUrl);
                 chain.doFilter(request, response);
             }
         } else if (isLocal) {
