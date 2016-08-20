@@ -56,10 +56,16 @@ public class Template {
     }
 
     public boolean isModified() {
-        File file = new File(this.getPath());
-        if (!file.exists()) {
-            throw new RuntimeException("FileNotFoundException");
+        if (getLastModified() <= 0) {
+            return true;
+        } else if (resource.isRemote()) {
+            return true;
+        } else {
+            File file = new File(this.getPath());
+            if (!file.exists()) {
+                throw new RuntimeException("FileNotFoundException");
+            }
+            return file.lastModified() != this.getLastModified();
         }
-        return file.lastModified() != this.getLastModified();
     }
 }

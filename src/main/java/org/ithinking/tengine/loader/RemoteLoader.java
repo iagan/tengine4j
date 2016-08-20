@@ -34,6 +34,7 @@ public class RemoteLoader extends AbstractLoader {
         Resource resource = new Resource();
         resource.setId(templateId);
         resource.setLastModified(-1);
+        resource.setRemote(true);
         resource.setPath(url);
         resource.setText(context);
         return resource;

@@ -25,6 +25,7 @@ public class TengineView implements View {
         this.engine = engine;
         this.template = template;
         this.locale = locale;
+        this.viewName = viewName;
     }
 
     @Override
