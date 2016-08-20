@@ -40,17 +40,17 @@ public class RemoteResourceFilter implements Filter {
         conf = Configuration.getWebConfiguration();
         logger.info("[Init-1] prefix={},suffix={}, charset={}, ctxPath={}", conf.getViewPrefix(), conf.getViewSuffix(), conf.getViewCharset(), ctxPath);
         conf.setViewCharset(XString.defVal(conf.getViewCharset(), "UTF-8"));
-        conf.setViewPrefix(XString.defVal(conf.getViewPrefix(), "/"));
+        conf.setViewPrefix(XString.defVal(conf.getViewPrefix(), "/tpl"));
         conf.setViewSuffix(XString.defVal(conf.getViewSuffix(), ".html"));
         conf.setWebContextPath(ctxPath);
         //
         docBasePath = conf.getDocBase();
         isDynamicRemoteHost = conf.isDynamicRemoteHost();
+        prefix = conf.getViewPrefix();
+        suffix = conf.getViewSuffix();
+        //
         logger.info("[Init-2] prefix={},suffix={}, charset={}, docBasePath={}, isDynamicRemoteUrl={}",
                 conf.getViewPrefix(), suffix, conf.getViewCharset(), docBasePath, isDynamicRemoteHost);
-
-        prefix = XString.defVal(conf.getViewPrefix(), "tpl").trim();
-        suffix = XString.defVal(conf.getViewSuffix(), ".html").trim();
 
         if (conf.isRemoteUrl()) {
             isRemote = true;
@@ -62,7 +62,7 @@ public class RemoteResourceFilter implements Filter {
                 before = splits[0].trim();
                 after = splits.length == 1 ? "" : splits[1].trim();
             }
-        } else if (prefix.startsWith("filepath:")) {
+        } else if (conf.isFilePath()) {
             isLocal = true;
         }
     }

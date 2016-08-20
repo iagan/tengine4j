@@ -115,8 +115,11 @@ public class XString {
         return !isBlank(src);
     }
 
-
     public static String makeUrl(String ip, String uri) {
+        return makeUrl(ip, uri, true);
+    }
+
+    public static String makeUrl(String ip, String uri, boolean autoSuffix) {
 
         if (uri == null || uri.isEmpty() || "/".equals(uri)) {
             uri = "/index.html";
@@ -140,7 +143,7 @@ public class XString {
         sb.append(uri.charAt(0) == '/' ? "" : "/").append(uri);
 
         // 没有后缀时自动加上后缀
-        if (uri.indexOf(".") == -1) {
+        if (autoSuffix && uri.indexOf(".") == -1) {
             sb.append(".html");
         }
 

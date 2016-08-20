@@ -44,7 +44,7 @@ public class TengineViewResolver extends WebApplicationObjectSupport implements 
         conf = Configuration.getWebConfiguration();
         logger.info("[InitServletContext-1] prefix={},suffix={}, charset={}, ctxPath={}", conf.getViewPrefix(), conf.getViewSuffix(), conf.getViewCharset(), ctxPath);
         conf.setViewCharset(XString.defVal(conf.getViewCharset(), "UTF-8"));
-        conf.setViewPrefix(XString.defVal(conf.getViewPrefix(), "/"));
+        conf.setViewPrefix(XString.defVal(conf.getViewPrefix(), "/tpl"));
         conf.setViewSuffix(XString.defVal(conf.getViewSuffix(), ".html"));
         conf.setWebContextPath(ctxPath);
         //
@@ -55,6 +55,7 @@ public class TengineViewResolver extends WebApplicationObjectSupport implements 
                 conf.getViewPrefix(), suffix, conf.getViewCharset(), docBasePath, isDynamicRemoteHost);
         //
         Loader loader = LoaderFactory.createLoader(conf);
+        logger.info("[InitServletContext] loader:{}", loader);
         HtmlParser parser = new HtmlParser();
         manager = new TemplateEngine(loader, conf, parser);
     }

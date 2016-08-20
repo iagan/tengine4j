@@ -11,7 +11,8 @@ public class Configuration {
     // 默认配置
     private static final Configuration DEFAULT;
     private static Configuration WEB;
-
+    // 文档基目录
+    private String docBase;
     // 模板编码
     private String viewCharset;
     // tg.view.prefix
@@ -102,9 +103,10 @@ public class Configuration {
     }
 
     private void copyFromDefault() {
-        this.setViewCharset(DEFAULT.getViewCharset());
-        this.setViewPrefix(DEFAULT.getViewPrefix());
-        this.setViewSuffix(DEFAULT.getViewSuffix());
+        this.docBase = DEFAULT.docBase;
+        this.viewCharset = DEFAULT.viewCharset;
+        this.viewPrefix = DEFAULT.viewPrefix;
+        this.viewSuffix = DEFAULT.viewSuffix;
     }
 
     public static Configuration getDefault() {
@@ -119,7 +121,9 @@ public class Configuration {
                 key = keys.next().toString();
                 value = properties.getProperty(key);
                 key = key.toLowerCase().trim();
-                if ("tg.view.charset".equals(key)) {
+                if ("tg.doc.base".equals(key)) {
+                    configuration.setDocBase(value == null ? null : value.trim());
+                } else if ("tg.view.charset".equals(key)) {
                     configuration.setViewCharset(value == null ? null : value.trim());
                 } else if ("tg.view.prefix".equals(key)) {
                     configuration.setViewPrefix(value == null ? null : value.trim());
@@ -132,6 +136,10 @@ public class Configuration {
         }
     }
 
+
+    public void setDocBase(String docBase) {
+        this.docBase = docBase;
+    }
 
     public String getViewCharset() {
         return viewCharset;
@@ -187,15 +195,15 @@ public class Configuration {
     }
 
     public boolean isClassPath() {
-        return viewPrefix != null && viewPrefix.startsWith("classpath:");
+        return docBase != null && docBase.startsWith("classpath:");
     }
 
     public boolean isFilePath() {
-        return viewPrefix != null && viewPrefix.startsWith("filepath:");
+        return docBase != null && docBase.startsWith("filepath:");
     }
 
     public boolean isRemoteUrl() {
-        return viewPrefix != null && (viewPrefix.startsWith("http:") || viewPrefix.startsWith("https:"));
+        return docBase != null && (docBase.startsWith("http:") || docBase.startsWith("https:"));
     }
 
     public boolean isContextPath() {
@@ -203,18 +211,30 @@ public class Configuration {
     }
 
     public boolean isDynamicRemoteHost() {
-        return isRemoteUrl() && viewPrefix.indexOf("{ip}") != -1;
+        return docBase != null && isRemoteUrl() && docBase.indexOf("{ip}") != -1;
     }
 
     public String getDocBase() {
         if (isClassPath()) {
-            return viewPrefix.substring("classpath:".length());
+            return docBase.substring("classpath:".length());
         } else if (isFilePath()) {
-            return viewPrefix.substring("filepath:".length());
+            return docBase.substring("filepath:".length());
         } else if (isRemoteUrl()) {
-            return viewPrefix;
+            return docBase;
         } else {
             return XString.makePath(webContextPath, viewPrefix);
+        }
+    }
+
+    public String getTplDocBase() {
+        String docBase = getDocBase();
+        if (XString.isBlank(docBase)) {
+            return viewPrefix;
+        }
+        if (isRemoteUrl()) {
+            return XString.makeUrl(docBase, viewPrefix, false);
+        } else {
+            return XString.makePath(docBase, viewPrefix);
         }
     }
 

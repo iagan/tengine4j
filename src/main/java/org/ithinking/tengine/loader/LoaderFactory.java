@@ -12,7 +12,7 @@ import org.ithinking.tengine.core.Loader;
 public class LoaderFactory {
 
     public static Loader createLoader(Configuration conf) {
-        String docBaseUrl = conf.getDocBase().trim();
+        String docBaseUrl = conf.getTplDocBase().trim();
         String charset = conf.getViewCharset();
         Loader loader;
         if (conf.isClassPath()) {
