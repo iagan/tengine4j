@@ -202,7 +202,7 @@ public class Configuration {
         return !isRemoteUrl() && !isFilePath() && !isClassPath();
     }
 
-    public boolean isDynamicRemoteUrl() {
+    public boolean isDynamicRemoteHost() {
         return isRemoteUrl() && viewPrefix.indexOf("{ip}") != -1;
     }
 

@@ -1,6 +1,5 @@
 package org.ithinking.tengine.loader;
 
-import org.ithinking.tengine.XString;
 import org.ithinking.tengine.core.Configuration;
 import org.ithinking.tengine.core.Loader;
 
@@ -12,18 +11,20 @@ import org.ithinking.tengine.core.Loader;
  */
 public class LoaderFactory {
 
-    public static Loader createLoader(Configuration configuration) {
-        String prefix = XString.defVal(configuration.getViewPrefix(), "").trim();
-        String charset = configuration.getViewCharset();
+    public static Loader createLoader(Configuration conf) {
+        String docBaseUrl = conf.getDocBase().trim();
+        String charset = conf.getViewCharset();
         Loader loader;
-        if (prefix.toLowerCase().indexOf("classpath:") == 0) {
-            loader = new ClasspathLoader(prefix.substring("classpath:".length()), charset);
-        } else if (prefix.toLowerCase().startsWith("http://") || prefix.toLowerCase().startsWith("https://")) {
-            loader = new RemoteLoader(prefix, charset);
-        } else if (prefix.toLowerCase().startsWith("filepath:")) {
-            loader = new FilepathLoader(prefix, charset);
+        if (conf.isClassPath()) {
+            loader = new ClasspathLoader(docBaseUrl, charset);
+        } else if (conf.isDynamicRemoteHost()) {
+            loader = new RemoteDynamicHostLoader(docBaseUrl, charset);
+        } else if (conf.isRemoteUrl()) {
+            loader = new RemoteLoader(docBaseUrl, charset);
+        } else if (conf.isFilePath()) {
+            loader = new FilepathLoader(docBaseUrl, charset);
         } else {
-            loader = new FilepathLoader(prefix, charset);
+            loader = new FilepathLoader(docBaseUrl, charset);
         }
         return loader;
     }

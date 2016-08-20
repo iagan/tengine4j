@@ -12,7 +12,11 @@ public class RemoteDynamicHostLoader extends RemoteLoader {
 
     private String before;
     private String after;
-    public static final ThreadLocal<String> REMOTE_IP = new ThreadLocal<>();
+    private static final ThreadLocal<String> REMOTE_IP = new ThreadLocal<>();
+
+    public static void setRemoteIp(String remoteIp) {
+        REMOTE_IP.set(remoteIp);
+    }
 
     public RemoteDynamicHostLoader(String remoteUrl, String charset) {
         super(remoteUrl, charset);

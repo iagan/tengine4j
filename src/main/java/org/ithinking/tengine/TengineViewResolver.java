@@ -1,6 +1,9 @@
 package org.ithinking.tengine;
 
-import org.ithinking.tengine.core.*;
+import org.ithinking.tengine.core.Configuration;
+import org.ithinking.tengine.core.Loader;
+import org.ithinking.tengine.core.Template;
+import org.ithinking.tengine.core.TemplateEngine;
 import org.ithinking.tengine.html.parser.HtmlParser;
 import org.ithinking.tengine.loader.LoaderFactory;
 import org.slf4j.Logger;
@@ -8,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.context.support.WebApplicationObjectSupport;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
-import org.springframework.web.servlet.config.annotation.RedirectViewControllerRegistration;
 import org.springframework.web.servlet.view.InternalResourceView;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -30,7 +32,7 @@ public class TengineViewResolver extends WebApplicationObjectSupport implements 
     private TemplateEngine manager = null;
     private String docBasePath;
     private String suffix;
-    private boolean isDynamicRemoteUrl = false;
+    private boolean isDynamicRemoteHost = false;
 
     private Configuration conf;
 
@@ -48,15 +50,13 @@ public class TengineViewResolver extends WebApplicationObjectSupport implements 
         //
         docBasePath = conf.getDocBase();
         suffix = conf.getViewSuffix();
-        isDynamicRemoteUrl = conf.isDynamicRemoteUrl();
+        isDynamicRemoteHost = conf.isDynamicRemoteHost();
         logger.info("[InitServletContext-2] prefix={},suffix={}, charset={}, docBasePath={}, isDynamicRemoteUrl={}",
-                conf.getViewPrefix(), suffix, conf.getViewCharset(), docBasePath, isDynamicRemoteUrl);
+                conf.getViewPrefix(), suffix, conf.getViewCharset(), docBasePath, isDynamicRemoteHost);
         //
         Loader loader = LoaderFactory.createLoader(conf);
         HtmlParser parser = new HtmlParser();
-        if (!isDynamicRemoteUrl) { // 非动态远程则创建固定的模板引擎
-            manager = new TemplateEngine(loader, conf, parser);
-        }
+        manager = new TemplateEngine(loader, conf, parser);
     }
 
 
@@ -83,7 +83,7 @@ public class TengineViewResolver extends WebApplicationObjectSupport implements 
             return new InternalResourceView(forwardUrl);
         }
 
-        if (this.isDynamicRemoteUrl) {
+        if (this.isDynamicRemoteHost) {
             return this.resolveRemoteView(viewName, locale);
         } else {
             return resolveLocalView(viewName, locale);
@@ -91,7 +91,7 @@ public class TengineViewResolver extends WebApplicationObjectSupport implements 
     }
 
     private View resolveRemoteView(String viewName, Locale locale) {
-        return new RemoteTengineView(locale, viewName, conf);
+        return new RemoteTengineView(null, manager, locale, viewName);
     }
 
     private View resolveLocalView(String viewName, Locale locale) {
@@ -99,7 +99,7 @@ public class TengineViewResolver extends WebApplicationObjectSupport implements 
         View view = null;
         if (template != null) {
             if (template.getBindingView() == null) {
-                template.setBindingView(new TengineView(template, manager, locale));
+                template.setBindingView(new TengineView(template, manager, locale, viewName));
             }
             if (!(template.getBindingView() instanceof View)) {
                 throw new RuntimeException("BindingView is not a spring View.");

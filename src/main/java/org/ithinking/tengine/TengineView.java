@@ -18,9 +18,10 @@ public class TengineView implements View {
     protected TemplateEngine engine = null;
     protected Template template = null;
     protected String charset = null;
+    protected String viewName = null;
     protected Locale locale;
 
-    public TengineView(Template template, TemplateEngine engine, Locale locale) {
+    public TengineView(Template template, TemplateEngine engine, Locale locale, String viewName) {
         this.engine = engine;
         this.template = template;
         this.locale = locale;
