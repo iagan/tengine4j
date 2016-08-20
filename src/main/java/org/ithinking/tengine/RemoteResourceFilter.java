@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 
 /**
@@ -83,30 +84,42 @@ public class RemoteResourceFilter implements Filter {
                 remoteBaseUrl = XString.makeUrl(docBasePath, uri);
             }
             logger.info("[REMOTE_URL]: url={}", remoteBaseUrl);
-            Http.get(XString.makeUrl(remoteBaseUrl, uri), response.getOutputStream());
+            try {
+                Http.get(XString.makeUrl(remoteBaseUrl, uri), response.getOutputStream());
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                // 对于未找到的资源，可以直接穿透使用服务器的资源
+                logger.info("[REMOTE_URL]: not find={}", remoteBaseUrl);
+                chain.doFilter(request, response);
+            }
         } else if (isLocal) {
             // 绝对路径本地加载
             chain.doFilter(request, response);
             String path = XString.makePath(docBasePath, uri);
-            readTo(path, response);
+            readTo(path, (HttpServletResponse) response);
         } else {
             chain.doFilter(request, response);
         }
     }
 
-    private void readTo(String path, ServletResponse response) {
+    private void readTo(String path, HttpServletResponse response) {
         File file = new File(path);
+
         OutputStream out = null;
         FileInputStream fis = null;
         try {
-            fis = new FileInputStream(file);
-            out = response.getOutputStream();
-            byte[] bytes = new byte[1024];
-            int len;
-            while ((len = fis.read(bytes)) != -1) {
-                out.write(bytes, 0, len);
+            if (!file.exists() || !file.isFile()) {
+                response.sendError(404, "资源未找到");
+            } else {
+                fis = new FileInputStream(file);
+                out = response.getOutputStream();
+                byte[] bytes = new byte[1024];
+                int len;
+                while ((len = fis.read(bytes)) != -1) {
+                    out.write(bytes, 0, len);
+                }
+                out.flush();
             }
-            out.flush();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
