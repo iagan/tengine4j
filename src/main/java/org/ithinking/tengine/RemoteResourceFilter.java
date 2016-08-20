@@ -54,7 +54,7 @@ public class RemoteResourceFilter implements Filter {
             isRemote = true;
             if (isDynamicRemoteHost) {
                 String[] splits = docBasePath.split("\\{ip\\}");
-                if (splits.length >= 1 && splits.length <= 2) {
+                if (splits.length < 1 || splits.length > 2) {
                     throw new IllegalArgumentException("Invalid remote url :" + docBasePath);
                 }
                 before = splits[0].trim();
