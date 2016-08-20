@@ -1,6 +1,7 @@
 package org.ithinking.tengine;
 
 import org.ithinking.tengine.core.Configuration;
+import org.ithinking.tengine.loader.RemoteDynamicHostLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,6 +72,9 @@ public class RemoteResourceFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         String uri = req.getServletPath();
         if (uri.endsWith(suffix) || uri.endsWith(".do") || uri.endsWith(".json") || uri.endsWith(".action") || uri.indexOf(".") == -1) {
+            if (isDynamicRemoteHost) {
+                RemoteDynamicHostLoader.setRemoteIp(WEB.getRemoteIP(req));
+            }
             // 动态资源
             chain.doFilter(request, response);
         } else if (isRemote) {
