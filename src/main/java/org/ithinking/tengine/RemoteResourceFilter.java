@@ -23,21 +23,46 @@ public class RemoteResourceFilter implements Filter {
     private boolean isLocal = false;
     private String prefix;
     private String suffix;
-    private String localFilePrefix;
+    private String docBasePath;
+
+    /**
+     * 远程动态IP
+     */
+    private boolean isDynamicRemoteHost;
+    private String before;
+    private String after;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
+
+        String ctxPath = filterConfig.getServletContext().getRealPath(filterConfig.getServletContext().getContextPath());
+        conf = Configuration.getWebConfiguration();
+        logger.info("[Init-1] prefix={},suffix={}, charset={}, ctxPath={}", conf.getViewPrefix(), conf.getViewSuffix(), conf.getViewCharset(), ctxPath);
+        conf.setViewCharset(XString.defVal(conf.getViewCharset(), "UTF-8"));
+        conf.setViewPrefix(XString.defVal(conf.getViewPrefix(), "/"));
+        conf.setViewSuffix(XString.defVal(conf.getViewSuffix(), ".html"));
+        conf.setWebContextPath(ctxPath);
+        //
+        docBasePath = conf.getDocBase();
+        isDynamicRemoteHost = conf.isDynamicRemoteHost();
+        logger.info("[Init-2] prefix={},suffix={}, charset={}, docBasePath={}, isDynamicRemoteUrl={}",
+                conf.getViewPrefix(), suffix, conf.getViewCharset(), docBasePath, isDynamicRemoteHost);
+
         prefix = XString.defVal(conf.getViewPrefix(), "tpl").trim();
         suffix = XString.defVal(conf.getViewSuffix(), ".html").trim();
-        logger.info("Use remoteResourceFilter: prefix={}, suffix={}", prefix, suffix);
-        if (prefix != null) {
-            if (prefix.startsWith("http://") || prefix.startsWith("https://")) {
-                isProxy = true;
-            } else if (prefix.equals("://")) {
-                isRemote = true;
-            } else if (prefix.startsWith("filepath:")) {
-                isLocal = true;
+
+        if (conf.isRemoteUrl()) {
+            isRemote = true;
+            if (isDynamicRemoteHost) {
+                String[] splits = docBasePath.split("\\{ip\\}");
+                if (splits.length >= 1 && splits.length <= 2) {
+                    throw new IllegalArgumentException("Invalid remote url :" + docBasePath);
+                }
+                before = splits[0].trim();
+                after = splits.length == 1 ? "" : splits[1].trim();
             }
+        } else if (prefix.startsWith("filepath:")) {
+            isLocal = true;
         }
     }
 
@@ -48,21 +73,22 @@ public class RemoteResourceFilter implements Filter {
         if (uri.endsWith(suffix) || uri.endsWith(".do") || uri.endsWith(".json") || uri.endsWith(".action") || uri.indexOf(".") == -1) {
             // 动态资源
             chain.doFilter(request, response);
-        } else if (isProxy) {
-            // 远程加载静态资源
-            String url = XString.makeUrl(prefix, uri);
-            logger.info("[Proxy-load]: url={}", url);
-            Http.get(url, response.getOutputStream());
         } else if (isRemote) {
-            // 追踪远程加载
-            String ip = WEB.getRemoteIP(req);
-            String url = XString.makeUrl(ip, uri);
-            logger.info("[Remote-load]: url={}", url);
-            Http.get(url, response.getOutputStream());
+            String remoteBaseUrl;
+            if (isDynamicRemoteHost) {
+                // 追踪远程加载
+                String ip = WEB.getRemoteIP(req);
+                remoteBaseUrl = before + ip + after;
+            } else {
+                // 远程加载静态资源
+                remoteBaseUrl = XString.makeUrl(docBasePath, uri);
+            }
+            logger.info("[REMOTE_URL]: url={}", remoteBaseUrl);
+            Http.get(XString.makeUrl(remoteBaseUrl, uri), response.getOutputStream());
         } else if (isLocal) {
             // 绝对路径本地加载
             chain.doFilter(request, response);
-            String path = XString.makePath(localFilePrefix, uri);
+            String path = XString.makePath(docBasePath, uri);
             readTo(path, response);
         } else {
             chain.doFilter(request, response);
