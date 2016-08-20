@@ -87,7 +87,7 @@ public class RemoteResourceFilter implements Filter {
             try {
                 Http.get(XString.makeUrl(remoteBaseUrl, uri), response.getOutputStream());
             } catch (FileNotFoundException e) {
-                e.printStackTrace();
+                // e.printStackTrace();
                 // 对于未找到的资源，可以直接穿透使用服务器的资源
                 logger.info("[REMOTE_URL]: not find={}", remoteBaseUrl);
                 chain.doFilter(request, response);
