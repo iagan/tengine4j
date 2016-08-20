@@ -18,7 +18,6 @@ public class RemoteResourceFilter implements Filter {
 
     private static final Logger logger = LoggerFactory.getLogger(RemoteResourceFilter.class);
     private static Configuration conf = Configuration.newConfiguration();
-    private boolean isProxy = false;
     private boolean isRemote = false;
     private boolean isLocal = false;
     private String prefix;
