@@ -1,7 +1,7 @@
 package org.ithinking.tengine;
 
 import org.ithinking.tengine.core.*;
-import org.ithinking.tengine.loader.ProxyLoader;
+import org.ithinking.tengine.loader.RemoteLoader;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,25 +30,9 @@ public class RemoteTengineView extends TengineView {
     }
 
 
-    private String getRemoteIP(HttpServletRequest request) {
-        String ip = request.getHeader("X-Forwarded-For");
-        if (ip == null || ip.trim().isEmpty()) {
-            ip = request.getHeader("X-real-ip");
-        } else {
-            int i = ip.indexOf(",");
-            ip = i > 0 ? ip.substring(0, i) : ip;
-        }
-
-        if (ip == null || ip.trim().isEmpty()) {
-            ip = request.getRemoteAddr();
-        }
-        return ip;
-    }
-
-
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        this.engine = new RemoteTemplateEngine(conf, new ProxyLoader(getRemoteIP(request), charset));
+        this.engine = new RemoteTemplateEngine(conf, new RemoteLoader(WEB.getRemoteIP(request), charset));
         this.template = engine.getTemplate(viewName, locale);
         Context context = new HttpServletRequestContext(engine, request, response, charset);
         context.putAll(model);

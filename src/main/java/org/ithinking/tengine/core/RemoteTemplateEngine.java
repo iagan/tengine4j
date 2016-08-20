@@ -1,7 +1,7 @@
 package org.ithinking.tengine.core;
 
 import org.ithinking.tengine.html.parser.HtmlParser;
-import org.ithinking.tengine.loader.ProxyLoader;
+import org.ithinking.tengine.loader.RemoteLoader;
 
 /**
  * 远程视图引擎
@@ -14,7 +14,7 @@ public class RemoteTemplateEngine extends TemplateEngine {
         super(loader, conf, parser);
     }
 
-    public RemoteTemplateEngine(Configuration conf, ProxyLoader proxyLoader) {
+    public RemoteTemplateEngine(Configuration conf, RemoteLoader proxyLoader) {
         this(proxyLoader, conf, new HtmlParser());
     }
 }

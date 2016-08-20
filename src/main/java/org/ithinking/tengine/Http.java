@@ -1,7 +1,9 @@
 package org.ithinking.tengine;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -31,6 +33,51 @@ public class Http {
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
+        }
+    }
+
+    public static void get(String url, OutputStream os) {
+        HttpURLConnection connection = null;
+        InputStream is = null;
+        try {
+            URL getUrl = new URL(url);
+            connection = (HttpURLConnection) getUrl.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setUseCaches(false);
+            connection.connect();
+            is = connection.getInputStream();
+            byte[] bytes = new byte[1024];
+            int len;
+            while ((len = is.read(bytes)) != -1) {
+                os.write(bytes, 0, len);
+            }
+            os.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        } finally {
+            close(is);
+            close(connection);
+        }
+    }
+
+    private static void close(HttpURLConnection connection) {
+        if (connection != null) {
+            try {
+                connection.disconnect();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private static void close(InputStream is) {
+        if (is != null) {
+            try {
+                is.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }

@@ -3,6 +3,8 @@ package org.ithinking.tengine;
 import org.ithinking.tengine.core.*;
 import org.ithinking.tengine.html.parser.HtmlParser;
 import org.ithinking.tengine.loader.LoaderFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.context.support.WebApplicationObjectSupport;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
@@ -18,83 +20,41 @@ import java.util.Locale;
  */
 //  org.springframework.web.servlet.view.AbstractCachingViewResolver
 public class TengineViewResolver extends WebApplicationObjectSupport implements ViewResolver, org.springframework.core.Ordered {
-
-    // org.slf4j.LoggerFactory
+    private static final Logger logger = LoggerFactory.getLogger(TengineViewResolver.class);
     //private static final Logger vrlogger = LoggerFactory.getLogger(ThymeleafViewResolver.class);
 
     public static final String REDIRECT_URL_PREFIX = "redirect:";
     public static final String FORWARD_URL_PREFIX = "forward:";
     private boolean redirectContextRelative = true;
     private boolean redirectHttp10Compatible = true;
-
     private TemplateEngine manager = null;
-
-    private String prefix;
+    private String docBasePath;
     private String suffix;
-    private String charset;
-    private String docBase;
-    private boolean remoteView = false;
+    private boolean isDynamicRemoteUrl = false;
+
     private Configuration conf;
 
-    public String getDocBase() {
-        return docBase;
-    }
-
-    public void setDocBase(String docBase) {
-        this.docBase = docBase;
-    }
-
-    public String getPrefix() {
-        return prefix;
-    }
-
-    public void setPrefix(String prefix) {
-        this.prefix = prefix;
-    }
-
-    public String getSuffix() {
-        return suffix;
-    }
-
-    public void setSuffix(String suffix) {
-        this.suffix = suffix;
-    }
-
-    public String getCharset() {
-        return charset;
-    }
-
-    public void setCharset(String charset) {
-        this.charset = charset;
-    }
-
-    public boolean isRemoteView() {
-        return remoteView;
-    }
-
-    public void setRemoteView(boolean remoteView) {
-        this.remoteView = remoteView;
-    }
 
     @Override
     protected void initServletContext(ServletContext servletContext) {
         super.initServletContext(servletContext);
-        conf = Configuration.newConfiguration();
+        String ctxPath = servletContext.getRealPath(servletContext.getContextPath());
+        conf = Configuration.getWebConfiguration();
+        logger.info("[InitServletContext-1] prefix={},suffix={}, charset={}, ctxPath={}", conf.getViewPrefix(), conf.getViewSuffix(), conf.getViewCharset(), ctxPath);
+        conf.setViewCharset(XString.defVal(conf.getViewCharset(), "UTF-8"));
+        conf.setViewPrefix(XString.defVal(conf.getViewPrefix(), "/"));
+        conf.setViewSuffix(XString.defVal(conf.getViewSuffix(), ".html"));
+        conf.setWebContextPath(ctxPath);
         //
-        this.docBase = XString.defVal(this.docBase, servletContext.getRealPath(servletContext.getContextPath()));
-        this.charset = XString.defVal(this.charset, conf.getViewCharset(), "UTF-8");
-        this.prefix = XString.defVal(this.prefix, conf.getViewPrefix(), "classpath:");
-        this.suffix = XString.defVal(this.suffix, conf.getViewSuffix(), ".html");
-        //
-        conf.setViewDocBase(docBase);
-        conf.setViewCharset(this.charset);
-        conf.setViewPrefix(this.prefix);
-        conf.setViewSuffix(this.suffix);
+        docBasePath = conf.getDocBase();
+        suffix = conf.getViewSuffix();
+        isDynamicRemoteUrl = conf.isDynamicRemoteUrl();
+        logger.info("[InitServletContext-2] prefix={},suffix={}, charset={}, docBasePath={}, isDynamicRemoteUrl={}",
+                conf.getViewPrefix(), suffix, conf.getViewCharset(), docBasePath, isDynamicRemoteUrl);
         //
         Loader loader = LoaderFactory.createLoader(conf);
         HtmlParser parser = new HtmlParser();
-        if (!this.isRemoteView()) {
-            // 非远程视图，即本地视图
+        if (!isDynamicRemoteUrl) { // 非动态远程则创建固定的模板引擎
             manager = new TemplateEngine(loader, conf, parser);
         }
     }
@@ -123,7 +83,7 @@ public class TengineViewResolver extends WebApplicationObjectSupport implements 
             return new InternalResourceView(forwardUrl);
         }
 
-        if (this.isRemoteView()) {
+        if (this.isDynamicRemoteUrl) {
             return this.resolveRemoteView(viewName, locale);
         } else {
             return resolveLocalView(viewName, locale);

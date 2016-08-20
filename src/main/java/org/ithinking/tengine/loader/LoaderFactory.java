@@ -18,10 +18,12 @@ public class LoaderFactory {
         Loader loader;
         if (prefix.toLowerCase().indexOf("classpath:") == 0) {
             loader = new ClasspathLoader(prefix.substring("classpath:".length()), charset);
-        } else if (prefix.toLowerCase().startsWith("http")) {
-            loader = new ProxyLoader(prefix, charset);
+        } else if (prefix.toLowerCase().startsWith("http://") || prefix.toLowerCase().startsWith("https://")) {
+            loader = new RemoteLoader(prefix, charset);
+        } else if (prefix.toLowerCase().startsWith("filepath:")) {
+            loader = new FilepathLoader(prefix, charset);
         } else {
-            loader = new FilepathLoader(XString.makePath(configuration.getViewDocBase(), prefix), charset);
+            loader = new FilepathLoader(prefix, charset);
         }
         return loader;
     }

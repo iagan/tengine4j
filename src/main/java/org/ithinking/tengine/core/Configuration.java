@@ -7,10 +7,13 @@ import java.net.URL;
 import java.util.*;
 
 public class Configuration {
+
+    // 默认配置
+    private static final Configuration DEFAULT;
+    private static Configuration WEB;
+
     // 模板编码
     private String viewCharset;
-    // 模板基目录
-    private String viewDocBase;
     // tg.view.prefix
     private String viewPrefix;
     // tg.view.suffix= .html
@@ -18,8 +21,9 @@ public class Configuration {
     private boolean isDefault = false;
     // 模板输出字符编码
     private String viewOutCharset;
-    // 默认配置
-    private static final Configuration DEFAULT;
+
+    // Web上下文路径
+    private String webContextPath;
 
     static {
         DEFAULT = new Configuration();
@@ -32,14 +36,15 @@ public class Configuration {
         } finally {
             DEFAULT.isDefault = true;
         }
+        WEB = newConfiguration();
     }
 
-    private Configuration(){
+    private Configuration() {
         this.isDefault = false;
     }
 
     private static void loadProperties(Enumeration<URL> urls) {
-        if(urls != null) {
+        if (urls != null) {
             String filePath;
             while (urls.hasMoreElements()) {
                 filePath = urls.nextElement().getFile();
@@ -75,30 +80,34 @@ public class Configuration {
         return properties;
     }
 
-    private static void close(InputStream is){
-        if(is != null){
-            try{
+    private static void close(InputStream is) {
+        if (is != null) {
+            try {
                 is.close();
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
-    public static Configuration newConfiguration(){
+    public static Configuration newConfiguration() {
         Configuration configuration = new Configuration();
         configuration.copyFromDefault();
         return configuration;
 
     }
 
-    private void copyFromDefault(){
+    public static Configuration getWebConfiguration() {
+        return WEB;
+    }
+
+    private void copyFromDefault() {
         this.setViewCharset(DEFAULT.getViewCharset());
         this.setViewPrefix(DEFAULT.getViewPrefix());
         this.setViewSuffix(DEFAULT.getViewSuffix());
     }
 
-    public static Configuration getDefault(){
+    public static Configuration getDefault() {
         return DEFAULT;
     }
 
@@ -116,9 +125,7 @@ public class Configuration {
                     configuration.setViewPrefix(value == null ? null : value.trim());
                 } else if ("tg.view.suffix".equals(key)) {
                     configuration.setViewSuffix(value == null ? null : value.trim());
-                } else if("tg.view.docBase".equals(key)){
-                    configuration.setViewDocBase(value == null ? null : value.trim());
-                } else if("tg.view.outCharset".equals(key)){
+                } else if ("tg.view.outCharset".equals(key)) {
                     configuration.setViewOutCharset(value == null ? null : value.trim());
                 }
             }
@@ -131,7 +138,7 @@ public class Configuration {
     }
 
     public void setViewCharset(String viewCharset) {
-        if(!isDefault) {
+        if (!isDefault) {
             this.viewCharset = viewCharset;
         }
     }
@@ -141,18 +148,8 @@ public class Configuration {
     }
 
     public void setViewPrefix(String viewPrefix) {
-        if(!isDefault) {
+        if (!isDefault) {
             this.viewPrefix = viewPrefix;
-        }
-    }
-
-    public String getViewDocBase() {
-        return viewDocBase;
-    }
-
-    public void setViewDocBase(String viewDocBase) {
-        if(!isDefault) {
-            this.viewDocBase = viewDocBase;
         }
     }
 
@@ -161,7 +158,7 @@ public class Configuration {
     }
 
     public void setViewSuffix(String viewSuffix) {
-        if(!isDefault) {
+        if (!isDefault) {
             this.viewSuffix = viewSuffix;
         }
     }
@@ -171,12 +168,57 @@ public class Configuration {
     }
 
     public void setViewOutCharset(String viewOutCharset) {
-        if(!isDefault) {
+        if (!isDefault) {
             this.viewOutCharset = viewOutCharset;
         }
     }
 
-    public String getViewOutCharsetOrDefault(){
+    /**
+     * Web环境，自动设置
+     *
+     * @return
+     */
+    public String getWebContextPath() {
+        return webContextPath;
+    }
+
+    public void setWebContextPath(String webContextPath) {
+        this.webContextPath = webContextPath;
+    }
+
+    public boolean isClassPath() {
+        return viewPrefix != null && viewPrefix.startsWith("classpath:");
+    }
+
+    public boolean isFilePath() {
+        return viewPrefix != null && viewPrefix.startsWith("filepath:");
+    }
+
+    public boolean isRemoteUrl() {
+        return viewPrefix != null && (viewPrefix.startsWith("http:") || viewPrefix.startsWith("https:"));
+    }
+
+    public boolean isContextPath() {
+        return !isRemoteUrl() && !isFilePath() && !isClassPath();
+    }
+
+    public boolean isDynamicRemoteUrl() {
+        return isRemoteUrl() && viewPrefix.indexOf("{ip}") != -1;
+    }
+
+    public String getDocBase() {
+        if (isClassPath()) {
+            return viewPrefix.substring("classpath:".length());
+        } else if (isFilePath()) {
+            return viewPrefix.substring("filepath:".length());
+        } else if (isRemoteUrl()) {
+            return viewPrefix;
+        } else {
+            return XString.makePath(webContextPath, viewPrefix);
+        }
+    }
+
+    public String getViewOutCharsetOrDefault() {
         return XString.defVal(viewOutCharset, "UTF-8");
     }
 
@@ -185,7 +227,7 @@ public class Configuration {
      *
      * @param args
      */
-    public static void main(String[] args){
+    public static void main(String[] args) {
         Configuration conf = Configuration.newConfiguration();
         System.out.print(conf);
     }

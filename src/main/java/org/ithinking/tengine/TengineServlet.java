@@ -23,31 +23,11 @@ public class TengineServlet implements Servlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         this.servletConfig = config;
-        conf = Configuration.newConfiguration();
-
+        conf = Configuration.getWebConfiguration();
         String realRoot = config.getServletContext().getRealPath(config.getServletContext().getContextPath());
-        String docBase = config.getInitParameter("tg.view.docBase");
-        String prefix = config.getInitParameter("tg.view.prefix");
-        String suffix = config.getInitParameter("tg.view.suffix");
-        String charset = config.getInitParameter("tg.view.charset");
 
-        if (XString.isNotBlank(docBase)) {
-            conf.setViewDocBase(docBase);
-        } else {
-            conf.setViewDocBase(realRoot);
-        }
 
-        if (XString.isNotBlank(prefix)) {
-            conf.setViewPrefix(prefix);
-        }
-        if (XString.isNotBlank(charset)) {
-            conf.setViewCharset(charset);
-        }
-
-        if (XString.isNotBlank(suffix)) {
-            conf.setViewSuffix(suffix);
-        }
-
+        conf.setWebContextPath(realRoot);
         Loader loader = LoaderFactory.createLoader(conf);
         HtmlParser parser = new HtmlParser();
         engine = new TemplateEngine(loader, conf, parser);
