@@ -21,7 +21,7 @@ public class RemoteDynamicHostLoader extends RemoteLoader {
     public RemoteDynamicHostLoader(String remoteUrl, String charset) {
         super(remoteUrl, charset);
         String[] splits = remoteUrl.split("\\{ip\\}");
-        if (splits.length >= 1 && splits.length <= 2) {
+        if (splits.length < 1 || splits.length > 2) {
             throw new IllegalArgumentException("Invalid remote url :" + remoteUrl);
         }
         before = splits[0].trim();
