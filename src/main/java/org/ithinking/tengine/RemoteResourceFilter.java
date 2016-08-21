@@ -84,13 +84,13 @@ public class RemoteResourceFilter implements Filter {
                 String ip = WEB.getRemoteIP(req);
                 remoteBase = before + ip + after;
             }
-            logger.info("[REMOTE_URL]: base={}, uri={}", remoteBase, uri);
+            String resUrl = XString.makeUrl(remoteBase, uri);
+            logger.info("[FILTER_REMOTE_URL]: Resource url={}", resUrl);
             try {
-                Http.get(XString.makeUrl(remoteBase, uri), response.getOutputStream());
+                Http.get(resUrl, response.getOutputStream());
             } catch (Http404Exception e) {
-                // e.printStackTrace();
                 // 对于未找到的资源，可以直接穿透使用服务器的资源
-                logger.error("[REMOTE_URL]: not find={}", remoteBase);
+                logger.error("[FILTER_REMOTE_URL]: Not found resource= {}", resUrl);
                 chain.doFilter(request, response);
             }
         } else if (isLocal) {
