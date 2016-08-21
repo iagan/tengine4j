@@ -1,9 +1,8 @@
 package org.ithinking.tengine;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import org.ithinking.tengine.exception.Http404Exception;
+
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -30,6 +29,8 @@ public class Http {
             reader.close();
             connection.disconnect();
             return sb.toString();
+        } catch (FileNotFoundException e) {
+            throw new Http404Exception(e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
@@ -52,6 +53,8 @@ public class Http {
                 os.write(bytes, 0, len);
             }
             os.flush();
+        } catch (FileNotFoundException e) {
+            throw new Http404Exception(e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);

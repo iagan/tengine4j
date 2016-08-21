@@ -1,6 +1,7 @@
 package org.ithinking.tengine;
 
 import org.ithinking.tengine.core.Configuration;
+import org.ithinking.tengine.exception.Http404Exception;
 import org.ithinking.tengine.loader.RemoteDynamicHostLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,22 +79,18 @@ public class RemoteResourceFilter implements Filter {
             // 动态资源
             chain.doFilter(request, response);
         } else if (isRemote) {
-            String remoteBaseUrl;
+            String remoteBase = docBasePath;
             if (isDynamicRemoteHost) {
-                // 追踪远程加载
                 String ip = WEB.getRemoteIP(req);
-                remoteBaseUrl = before + ip + after;
-            } else {
-                // 远程加载静态资源
-                remoteBaseUrl = XString.makeUrl(docBasePath, uri);
+                remoteBase = before + ip + after;
             }
-            logger.info("[REMOTE_URL]: url={}", remoteBaseUrl);
+            logger.info("[REMOTE_URL]: base={}, uri={}", remoteBase, uri);
             try {
-                Http.get(XString.makeUrl(remoteBaseUrl, uri), response.getOutputStream());
-            } catch (FileNotFoundException e) {
+                Http.get(XString.makeUrl(remoteBase, uri), response.getOutputStream());
+            } catch (Http404Exception e) {
                 // e.printStackTrace();
                 // 对于未找到的资源，可以直接穿透使用服务器的资源
-                logger.error("[REMOTE_URL]: not find={}", remoteBaseUrl);
+                logger.error("[REMOTE_URL]: not find={}", remoteBase);
                 chain.doFilter(request, response);
             }
         } else if (isLocal) {
