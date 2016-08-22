@@ -222,7 +222,8 @@ public class Configuration {
         } else if (isRemoteUrl()) {
             return docBase;
         } else {
-            return XString.makePath(webContextPath, viewPrefix);
+            // web 环境
+            return webContextPath;
         }
     }
 
