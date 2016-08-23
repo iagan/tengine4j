@@ -73,6 +73,9 @@ public class XString {
     }
 
     public static String makePath(String parent, String file) {
+        parent = parent == null ? "" : parent;
+        file = file == null ? "" : file;
+        //
         int length = parent.length();
         int totalLength = length + file.length();
         char ch;
@@ -80,6 +83,12 @@ public class XString {
         String target = parent;
         StringBuilder sb = new StringBuilder(parent.length() + file.length());
         for (int i = 0; i < totalLength; i++) {
+            if (i == length) {
+                if (count == 0) {
+                    sb.append(File.separator);
+                    count++;
+                }
+            }
             if (i >= length) {
                 ch = file.charAt(i - length);
             } else {
@@ -97,6 +106,11 @@ public class XString {
             sb.append(ch);
         }
         return sb.toString();
+    }
+
+    public static void main(String[] args) {
+        String s = makePath("dir/////", "file/jjj\\666\\\\\\777.html");
+        System.out.println(s);
     }
 
     public static boolean isBlank(String src) {
