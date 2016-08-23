@@ -95,7 +95,6 @@ public class RemoteResourceFilter implements Filter {
             }
         } else if (isLocal) {
             // 绝对路径本地加载
-            chain.doFilter(request, response);
             String path = XString.makePath(docBasePath, uri);
             readTo(path, (HttpServletResponse) response);
         } else {
