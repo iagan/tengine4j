@@ -44,9 +44,21 @@ public class Configuration {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
+            logger.info("\n\n[DEFAULT CONFIG] tg.img.base={}, tg.view.prefix={}, tg.view.suffix={},tg.doc.base={}\n\n",
+                    DEFAULT.getImageBase(),
+                    DEFAULT.getViewPrefix(),
+                    DEFAULT.getViewSuffix(),
+                    DEFAULT.getDocBase()
+            );
             DEFAULT.isDefault = true;
         }
         WEB = newConfiguration();
+        logger.info("\n\n[WEB CONFIG] tg.img.base={}, tg.view.prefix={}, tg.view.suffix={},tg.doc.base={}\n\n",
+                WEB.getImageBase(),
+                WEB.getViewPrefix(),
+                WEB.getViewSuffix(),
+                WEB.getDocBase()
+        );
     }
 
     private Configuration() {
@@ -84,7 +96,7 @@ public class Configuration {
             while (urls.hasMoreElements()) {
                 filePath = urls.nextElement().getFile();
                 File file = new File(filePath);
-                logger.info("\n\n[LOAD FILE] - {}\n\n", filePath);
+                logger.info("\n\n[LOAD FILE] - {} ", filePath);
                 if (file.exists() && file.isDirectory()) {
                     File[] files = file.listFiles(new FilenameFilter() {
                         @Override
@@ -106,8 +118,22 @@ public class Configuration {
         Properties properties = new Properties();
         FileInputStream inputStream = null;
         try {
+            logger.info("\n\n[loadProperties] exists={}, file={}", file.exists(), file.getAbsoluteFile());
             inputStream = new FileInputStream(file);
             properties.load(inputStream);
+
+
+            String imageBase = properties.getProperty("tg.img.base");
+            String prefix = properties.getProperty("tg.view.prefix");
+            String suffix = properties.getProperty("tg.view.suffix");
+            String docBase = properties.getProperty("tg.doc.base");
+            String charset = properties.getProperty("tg.view.charset");
+            logger.info("\n\n[loadProperties] tg.img.base={}, tg.view.prefix={}, tg.view.suffix={}, tg.doc.base={}, tg.view.charset={}\n\n", imageBase, prefix, suffix, docBase, charset);
+            DEFAULT.imageBase = imageBase;
+            DEFAULT.viewPrefix = prefix;
+            DEFAULT.viewSuffix = suffix;
+            DEFAULT.docBase = docBase;
+            DEFAULT.viewCharset = charset;
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -139,6 +165,7 @@ public class Configuration {
     }
 
     private void copyFromDefault() {
+        this.imageBase = DEFAULT.imageBase;
         this.docBase = DEFAULT.docBase;
         this.viewCharset = DEFAULT.viewCharset;
         this.viewPrefix = DEFAULT.viewPrefix;
