@@ -157,6 +157,7 @@ public class Configuration {
                 key = keys.next().toString();
                 value = properties.getProperty(key);
                 key = key.toLowerCase().trim();
+                logger.info("[LOAD-CONFG] key:{}, value={}", key, value);
                 if ("tg.img.base".equals(key)) {
                     configuration.setImageBase(value == null ? null : value.trim());
                 } else if ("tg.doc.base".equals(key)) {
