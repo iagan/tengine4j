@@ -1,5 +1,6 @@
 package org.ithinking.tengine;
 
+import org.ithinking.tengine.core.Configuration;
 import org.ithinking.tengine.core.Context;
 import org.ithinking.tengine.core.TemplateEngine;
 
@@ -45,6 +46,9 @@ public class HttpServletRequestContext extends DefContext {
         String strKey = key.toString();
         Object value = super.get(strKey);
         if (value == null) {
+            if ("IMG_BASE".equals(strKey)) {
+                return Configuration.getWebConfiguration().getImageBase();
+            }
             char first = strKey.charAt(0);
             if (first == '$') { // 获取请求参数
                 if (strKey.indexOf("_") == 2) {

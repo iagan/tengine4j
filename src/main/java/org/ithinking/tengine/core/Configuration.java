@@ -25,6 +25,8 @@ public class Configuration {
 
     // Web上下文路径
     private String webContextPath;
+    // 图片基路径
+    private String imageBase;
 
     static {
         DEFAULT = new Configuration();
@@ -168,6 +170,16 @@ public class Configuration {
     public void setViewSuffix(String viewSuffix) {
         if (!isDefault) {
             this.viewSuffix = viewSuffix;
+        }
+    }
+
+    public String getImageBase() {
+        return imageBase;
+    }
+
+    public void setImageBase(String imageBase) {
+        if (!isDefault) {
+            this.imageBase = imageBase;
         }
     }
 
