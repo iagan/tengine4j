@@ -1,13 +1,15 @@
 package org.ithinking.tengine.core;
 
 import org.ithinking.tengine.XString;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.URL;
 import java.util.*;
 
 public class Configuration {
-
+    private static final Logger logger = LoggerFactory.getLogger(Configuration.class);
     // 默认配置
     private static final Configuration DEFAULT;
     private static Configuration WEB;
@@ -31,9 +33,14 @@ public class Configuration {
     static {
         DEFAULT = new Configuration();
         try {
-            ClassLoader classLoader = Configuration.class.getClassLoader();
-            Enumeration<URL> urls = classLoader.getResources("");
-            loadProperties(urls);
+            if (!loadDefConfig(Thread.currentThread().getContextClassLoader())) {
+                if (!loadDefConfig(Configuration.class.getClassLoader())) {
+                    ClassLoader classLoader = Configuration.class.getClassLoader();
+                    Enumeration<URL> urls = classLoader.getResources("");
+                    logger.info("\n\n[LOAD CONFIG] - {}\n\n", urls);
+                    loadProperties(urls);
+                }
+            }
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -46,12 +53,38 @@ public class Configuration {
         this.isDefault = false;
     }
 
+    /**
+     * 加载  tengine.properties 文件
+     *
+     * @return
+     */
+    private static boolean loadDefConfig(ClassLoader classLoader) {
+        // tengine.properties
+        try {
+            URL url = classLoader.getResource("/tengine.properties");
+            if (url == null) {
+                url = classLoader.getResource("tengine.properties");
+            }
+            if (url == null) {
+                return false;
+            }
+            logger.info("\n\n[LOAD DEF CONFIG] - {}\n\n", url.getFile());
+            loadProperties(new File(url.getFile()));
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.info("\n\n[LOAD_ERROR]\n\n");
+            return false;
+        }
+    }
+
     private static void loadProperties(Enumeration<URL> urls) {
         if (urls != null) {
             String filePath;
             while (urls.hasMoreElements()) {
                 filePath = urls.nextElement().getFile();
                 File file = new File(filePath);
+                logger.info("\n\n[LOAD FILE] - {}\n\n", filePath);
                 if (file.exists() && file.isDirectory()) {
                     File[] files = file.listFiles(new FilenameFilter() {
                         @Override
@@ -61,6 +94,7 @@ public class Configuration {
                     });
 
                     for (int i = 0, len = files == null ? 0 : files.length; i < len; i++) {
+                        logger.info("\n\n[FIND FILE] - {}\n\n", files[i].getAbsoluteFile());
                         config(DEFAULT, loadProperties(files[i]));
                     }
                 }
@@ -123,7 +157,9 @@ public class Configuration {
                 key = keys.next().toString();
                 value = properties.getProperty(key);
                 key = key.toLowerCase().trim();
-                if ("tg.doc.base".equals(key)) {
+                if ("tg.img.base".equals(key)) {
+                    configuration.setImageBase(value == null ? null : value.trim());
+                } else if ("tg.doc.base".equals(key)) {
                     configuration.setDocBase(value == null ? null : value.trim());
                 } else if ("tg.view.charset".equals(key)) {
                     configuration.setViewCharset(value == null ? null : value.trim());
