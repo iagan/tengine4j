@@ -3,6 +3,8 @@ package org.ithinking.tengine;
 import org.ithinking.tengine.core.Context;
 import org.ithinking.tengine.core.Template;
 import org.ithinking.tengine.core.TemplateEngine;
+import org.ithinking.tengine.html.Tag;
+import org.ithinking.tengine.html.parser.HtmlScanner;
 import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,12 +37,18 @@ public class TengineView implements View {
 
     @Override
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
-
-
-
         Context context = new HttpServletRequestContext(engine, request, response, charset);
         context.putAll(model);
-        if (template != null) {
+        //
+        String fragId = request.getParameter("_fragId");
+        Tag tag = null;
+        //
+        if (XString.isNotBlank(fragId)) {
+            tag = template.getDocument().getFragment(fragId);
+        }
+        if (tag != null) {
+            tag.render(context);
+        } else if (template != null) {
             template.render(context);
         }
     }

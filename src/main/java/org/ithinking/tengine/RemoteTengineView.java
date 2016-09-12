@@ -4,6 +4,7 @@ import org.ithinking.tengine.core.Configuration;
 import org.ithinking.tengine.core.Context;
 import org.ithinking.tengine.core.Template;
 import org.ithinking.tengine.core.TemplateEngine;
+import org.ithinking.tengine.html.Tag;
 import org.ithinking.tengine.loader.RemoteDynamicHostLoader;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,10 +29,6 @@ public class RemoteTengineView extends TengineView {
     public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
         RemoteDynamicHostLoader.setRemoteIp(WEB.getRemoteIP(request));
         this.template = engine.getTemplate(viewName, locale);
-        Context context = new HttpServletRequestContext(engine, request, response, charset);
-        context.putAll(model);
-        if (template != null) {
-            template.render(context);
-        }
+        super.render(model, request, response);
     }
 }
