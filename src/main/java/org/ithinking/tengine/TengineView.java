@@ -41,13 +41,11 @@ public class TengineView implements View {
         context.putAll(model);
         //
         String fragId = request.getParameter("_fragId");
-        Tag tag = null;
-        //
         if (XString.isNotBlank(fragId)) {
-            tag = template.getDocument().getFragment(fragId);
-        }
-        if (tag != null) {
-            tag.render(context);
+            Tag tag = template.getDocument().getFragment(fragId);
+            if (tag != null) {
+                tag.render(context);
+            }
         } else if (template != null) {
             template.render(context);
         }
