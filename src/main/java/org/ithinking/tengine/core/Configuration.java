@@ -10,7 +10,7 @@ import java.util.*;
 
 public class Configuration {
     private static final Logger logger = LoggerFactory.getLogger(Configuration.class);
-    public static final String PERM_KEY = "$PERM_SET$";
+    public static final String PERM_KEY = "$_PERM_SET_$";
     // 默认配置
     private static final Configuration DEFAULT;
     private static Configuration WEB;
