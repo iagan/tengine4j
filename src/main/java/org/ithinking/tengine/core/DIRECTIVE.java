@@ -16,6 +16,7 @@ public enum DIRECTIVE {
 	MODEL("model",""), 
 	CLASS("class","class"),
 	HEADER("header",""),
+	PERM("perm",""),
 	TEXT("text",""), 
 	HTML("html",""), 
 	ATTR("attr","*"),

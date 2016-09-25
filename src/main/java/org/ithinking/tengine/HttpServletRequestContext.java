@@ -49,6 +49,13 @@ public class HttpServletRequestContext extends DefContext {
             if ("IMG_BASE".equals(strKey)) {
                 return Configuration.getWebConfiguration().getImageBase();
             }
+            // 权限集合
+            if (Configuration.PERM_KEY.equals(strKey)) {
+                value = request.getAttribute(Configuration.PERM_KEY);
+                if (value == null) {
+                    return getFromSession(Configuration.PERM_KEY);
+                }
+            }
             char first = strKey.charAt(0);
             if (first == '$') { // 获取请求参数
                 if (strKey.indexOf("_") == 2) {
@@ -85,6 +92,14 @@ public class HttpServletRequestContext extends DefContext {
             }
         }
         return value;
+    }
+
+    private Object getFromSession(String key) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            return session.getAttribute(key);
+        }
+        return null;
     }
 
     private Cookie findCookie(Cookie[] cookies, String name) {

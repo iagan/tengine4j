@@ -5,6 +5,8 @@ import java.util.Map;
 
 public interface Context extends Map<String,Object>{
 
+    boolean checkPerm(String permCode);
+
     Context add(String key, Object value);
 
     Template loadTemplate(String path);

@@ -1,5 +1,6 @@
 package org.ithinking.tengine;
 
+import org.ithinking.tengine.core.Configuration;
 import org.ithinking.tengine.core.Context;
 import org.ithinking.tengine.core.Template;
 import org.ithinking.tengine.core.TemplateEngine;
@@ -7,6 +8,8 @@ import org.ithinking.tengine.core.TemplateEngine;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 public class DefContext extends HashMap<String, Object> implements Context {
 
@@ -32,7 +35,24 @@ public class DefContext extends HashMap<String, Object> implements Context {
     }
 
     @Override
-    public Context add(String key, Object value){
+    public boolean checkPerm(String permCode) {
+        if (Configuration.getDefault().isEnablePerm()) {
+            Object permSet = this.get(Configuration.PERM_KEY);
+            if (permSet instanceof String) {
+                return permSet.equals(permCode);
+            } else if (permSet instanceof Set) {
+                return ((Set) permSet).contains(permCode);
+            } else if (permSet instanceof Map) {
+                return ((Map) permSet).containsKey(permCode);
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public Context add(String key, Object value) {
         this.put(key, value);
         return this;
     }

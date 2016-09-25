@@ -10,6 +10,7 @@ import java.util.*;
 
 public class Configuration {
     private static final Logger logger = LoggerFactory.getLogger(Configuration.class);
+    public static final String PERM_KEY = "$PERM_SET$";
     // 默认配置
     private static final Configuration DEFAULT;
     private static Configuration WEB;
@@ -21,9 +22,12 @@ public class Configuration {
     private String viewPrefix;
     // tg.view.suffix= .html
     private String viewSuffix;
+
     private boolean isDefault = false;
     // 模板输出字符编码
     private String viewOutCharset;
+    // tg.enable.perm
+    private boolean enablePerm = true;
 
     // Web上下文路径
     private String webContextPath;
@@ -128,12 +132,15 @@ public class Configuration {
             String suffix = properties.getProperty("tg.view.suffix");
             String docBase = properties.getProperty("tg.doc.base");
             String charset = properties.getProperty("tg.view.charset");
-            logger.info("\n\n[loadProperties] tg.img.base={}, tg.view.prefix={}, tg.view.suffix={}, tg.doc.base={}, tg.view.charset={}\n\n", imageBase, prefix, suffix, docBase, charset);
+            String enablePerm = properties.getProperty("tg.enable.perm");
+            logger.info("\n\n[loadProperties] tg.img.base={}, tg.view.prefix={}, tg.view.suffix={}, tg.doc.base={}, tg.view.charset={}, tg.enable.perm={}\n\n",
+                    imageBase, prefix, suffix, docBase, charset, enablePerm);
             DEFAULT.imageBase = imageBase;
             DEFAULT.viewPrefix = prefix;
             DEFAULT.viewSuffix = suffix;
             DEFAULT.docBase = docBase;
             DEFAULT.viewCharset = charset;
+            DEFAULT.enablePerm = Boolean.valueOf(XString.defVal(enablePerm, "false"));
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -170,6 +177,7 @@ public class Configuration {
         this.viewCharset = DEFAULT.viewCharset;
         this.viewPrefix = DEFAULT.viewPrefix;
         this.viewSuffix = DEFAULT.viewSuffix;
+        this.enablePerm = DEFAULT.enablePerm;
     }
 
     public static Configuration getDefault() {
@@ -197,11 +205,22 @@ public class Configuration {
                     configuration.setViewSuffix(value == null ? null : value.trim());
                 } else if ("tg.view.outCharset".equals(key)) {
                     configuration.setViewOutCharset(value == null ? null : value.trim());
+                }  else if ("tg.enable.perm".equals(key)) {
+                    configuration.setEnablePerm(Boolean.valueOf(XString.defVal(value, "false")));
                 }
             }
         }
     }
 
+    public boolean isEnablePerm() {
+        return enablePerm;
+    }
+
+    public void setEnablePerm(boolean enablePerm) {
+        if (!isDefault) {
+            this.enablePerm = enablePerm;
+        }
+    }
 
     public void setDocBase(String docBase) {
         this.docBase = docBase;

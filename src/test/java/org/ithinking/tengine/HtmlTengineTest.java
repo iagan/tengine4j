@@ -40,7 +40,8 @@ public class HtmlTengineTest {
         Context context = new DefContext(manager);
         Template template = context.loadTemplate("index.html");
         context.add("title", "this is test").add("queryUrl", "http://localhost").add("userList", userList)
-                .add("admin", admin).add("showList", true);
+                .add("admin", admin).add("showList", true)
+                .add(Configuration.PERM_KEY, "0494");
         context.add("radio", true).add("checkbox", false);
 
         template.render(context);

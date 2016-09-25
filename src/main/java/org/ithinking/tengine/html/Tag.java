@@ -1,16 +1,12 @@
 package org.ithinking.tengine.html;
 
-import java.io.Closeable;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.ithinking.tengine.Indicator;
 import org.ithinking.tengine.core.*;
 import org.ithinking.tengine.expr.Expression;
 import org.ithinking.tengine.expr.ExpressionFactory;
+
+import java.io.Closeable;
+import java.util.*;
 
 public class Tag extends AbstractRender {
 
@@ -28,6 +24,12 @@ public class Tag extends AbstractRender {
     private Document doc;
     private String fragid;
     private FragAttr fragAttr;
+
+    /**
+     * 权限控制
+     */
+    private boolean isPerm = false;
+    private String permCode; // 权限码
 
     public Tag(String name) {
         this(name, 0);
@@ -152,7 +154,7 @@ public class Tag extends AbstractRender {
         // 处理请求参数，放入上下文中
         List<Param> params = fragAttr.getParams();
         if (params != null && !params.isEmpty()) {
-            for (Param param : params){
+            for (Param param : params) {
                 ctx.add(param.getName(), param.getValue(ctx));
             }
         }
@@ -307,8 +309,14 @@ public class Tag extends AbstractRender {
 
     }
 
+
     @Override
     public void render(Context ctx) {
+        if (isPerm && !ctx.checkPerm(permCode)) {
+            // 权限检查不通过则忽略渲染
+            return;
+        }
+
         if (!this.isHeader) {
             if (!this.isSkip(ctx)) {
                 if (this.isLoop(ctx)) {
@@ -405,6 +413,9 @@ public class Tag extends AbstractRender {
             this.continueExpression = ExpressionFactory.createExpression(attr.getValue());
         } else if (attr.getType() == DIRECTIVE.IF) {
             this.ifExpression = ExpressionFactory.createExpression(attr.getValue());
+        } else if (attr.getType() == DIRECTIVE.PERM) {
+            this.isPerm = true;
+            this.permCode = attr.getValue();
         } else {
             AttrGroup group = findAttrGroup(attr.getName());
             if (group == null) {
