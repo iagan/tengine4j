@@ -44,6 +44,8 @@ public class DefContext extends HashMap<String, Object> implements Context {
                 return ((Set) permSet).contains(permCode);
             } else if (permSet instanceof Map) {
                 return ((Map) permSet).containsKey(permCode);
+            } else if (permSet instanceof Boolean) {
+                return ((Boolean) permSet).booleanValue();
             } else {
                 return false;
             }
