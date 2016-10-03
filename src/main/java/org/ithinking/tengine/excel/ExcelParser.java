@@ -118,13 +118,17 @@ public class ExcelParser {
 
     private RowDef createRowDef(Element rowElm) {
         RowDef rowDef = new RowDef();
-        rowDef.setHeight(readInt(rowElm, "index"));
+        rowDef.setIndex(readInt(rowElm, "index"));
+        rowDef.setHeight(readInt(rowElm, "height"));
         return rowDef;
     }
 
     private CellDef createCellDef(Element cellElm) {
         CellDef cellDef = new CellDef();
         cellDef.setText(cellElm.getTextContent());
+        cellDef.setIndex(readInt(cellElm, "index"));
+        cellDef.setType(readString(cellElm, "type"));
+        cellDef.setWidth(readInt(cellElm, "width"));
         return cellDef;
     }
 
@@ -135,5 +139,13 @@ public class ExcelParser {
             return null;
         }
         return Integer.parseInt(value);
+    }
+
+    private String readString(Element elm, String attr) {
+        String value = elm.getAttribute(attr);
+        if (value == null || value.trim().isEmpty()) {
+            return null;
+        }
+        return value.trim();
     }
 }

@@ -28,7 +28,7 @@ public class ExcelTest {
             ClasspathLoader cl = new ClasspathLoader(null, null);
             Resource res = cl.load("/templates/excel.xml");
             String tplText = res.getText();
-            excelBuilder.render(fos, tplText);
+            excelBuilder.builder(fos, tplText);
         } catch (Exception e) {
             e.printStackTrace();
         }
