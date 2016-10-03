@@ -25,6 +25,9 @@ public class CellDef {
     // 单元格格式化
     private WritableCellFormat format;
 
+    private Style style;
+
+
     public String getText() {
         return text;
     }
@@ -55,5 +58,29 @@ public class CellDef {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public WritableFont getFont() {
+        return font;
+    }
+
+    public void setFont(WritableFont font) {
+        this.font = font;
+    }
+
+    public WritableCellFormat getFormat() {
+        return format;
+    }
+
+    public void setFormat(WritableCellFormat format) {
+        this.format = format;
+    }
+
+    public Style getStyle() {
+        return style;
+    }
+
+    public void setStyle(Style style) {
+        this.style = style;
     }
 }

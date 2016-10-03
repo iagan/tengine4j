@@ -129,6 +129,12 @@ public class ExcelParser {
         cellDef.setIndex(readInt(cellElm, "index"));
         cellDef.setType(readString(cellElm, "type"));
         cellDef.setWidth(readInt(cellElm, "width"));
+        //
+        String styleStr = readString(cellElm, "style");
+        if (styleStr != null && !styleStr.trim().isEmpty()) {
+            Style style = parseStyle(styleStr);
+            cellDef.setStyle(style);
+        }
         return cellDef;
     }
 
@@ -147,5 +153,32 @@ public class ExcelParser {
             return null;
         }
         return value.trim();
+    }
+
+    private Style parseStyle(String styleStr) {
+        if (styleStr == null || styleStr.trim().isEmpty()) {
+            return null;
+        }
+        Style style = new Style();
+        String[] styles = styleStr.split(";");
+        String[] keyValue;
+        for (String s : styles) {
+            keyValue = s.split(":");
+            String name = keyValue[0].trim();
+            String val = keyValue[1].trim();
+            //
+            if ("font-family".equalsIgnoreCase(name)) {
+                style.setFontFamily(val);
+            } else if ("font-size".equalsIgnoreCase(name)) {
+                style.setFontSize(val);
+            } else if ("font-weight".equalsIgnoreCase(name)) {
+                style.setFontWeight(val);
+            } else if ("color".equalsIgnoreCase(name)) {
+                style.setColor(val);
+            } else if ("font-style".equalsIgnoreCase(name)) {
+                style.setFontStyle(val);
+            }
+        }
+        return style;
     }
 }

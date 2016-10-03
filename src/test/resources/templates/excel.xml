@@ -6,7 +6,7 @@
         </row>
 
         <row height="500">
-            <cell type="date"  width="20" index="2">另一行</cell>
+            <cell type="date"  width="20" index="2" style="">另一行</cell>
             <cell type="date"  width="20">什么</cell>
         </row>
 
