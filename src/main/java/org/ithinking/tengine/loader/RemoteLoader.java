@@ -30,7 +30,7 @@ public class RemoteLoader extends AbstractLoader {
     public Resource load(String templateId) {
         String url = getRemoteUrl(templateId);
         logger.info("[Load] templateId={} --> remoteUrl:{}", templateId, url);
-        String context = Http.get(url);
+        String context = Http.get(url, RemoteDynamicHostLoader.getHost());
         Resource resource = new Resource();
         resource.setId(templateId);
         resource.setLastModified(-1);

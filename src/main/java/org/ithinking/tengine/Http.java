@@ -13,11 +13,18 @@ import java.net.URL;
  * @date 2016-08-20
  */
 public class Http {
-    public static String get(String url) {
+    static {
+       // System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
+    }
+
+    public static String get(String url, String host) {
         try {
             URL getUrl = new URL(url);
             HttpURLConnection connection = (HttpURLConnection) getUrl.openConnection();
             connection.setRequestMethod("GET");
+            if(XString.isNotBlank(host)) {
+                connection.setRequestProperty("VHost", host);
+            }
             connection.setUseCaches(false);
             connection.connect();
             BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
@@ -37,13 +44,17 @@ public class Http {
         }
     }
 
-    public static void get(String url, OutputStream os) {
+
+    public static void get(String url, String host, OutputStream os) {
         HttpURLConnection connection = null;
         InputStream is = null;
         try {
             URL getUrl = new URL(url);
             connection = (HttpURLConnection) getUrl.openConnection();
             connection.setRequestMethod("GET");
+            if(XString.isNotBlank(host)) {
+                connection.setRequestProperty("VHost", host);
+            }
             connection.setUseCaches(false);
             connection.connect();
             is = connection.getInputStream();

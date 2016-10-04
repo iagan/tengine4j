@@ -24,4 +24,9 @@ public class WEB {
         }
         return ip;
     }
+
+    public static void setHost(HttpServletRequest request){
+        request.getHeader("Host");
+
+    }
 }

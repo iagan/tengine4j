@@ -95,12 +95,27 @@ public class RemoteResourceFilter implements Filter {
             }
         } else if (isLocal) {
             // 绝对路径本地加载
+           // String base = getMultiVersionDocBasePath(docBasePath, (HttpServletRequest) request);
             String path = XString.makePath(docBasePath, uri);
             readTo(path, (HttpServletResponse) response);
         } else {
             chain.doFilter(request, response);
         }
     }
+
+//    private String getMultiVersionDocBasePath(String docBasePath, HttpServletRequest request) {
+//        if (conf.isMultiVersion()) {
+//            String version = request.getParameter("_v");
+//
+//            if (XString.isNotBlank(version)) {
+//                int i = docBasePath.lastIndexOf("-");
+//                if (i != -1) {
+//                    return docBasePath.substring(0, i + 1) + version;
+//                }
+//            }
+//        }
+//        return docBasePath;
+//    }
 
     private void readTo(String path, HttpServletResponse response) {
         File file = new File(path);

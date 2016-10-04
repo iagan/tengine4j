@@ -18,6 +18,7 @@ public class ClasspathLoader extends AbstractLoader {
         this.encoding = XString.defVal(encoding, "UTF-8");
     }
 
+    @Override
     public Resource load(String templateId) {
         ClassLoader classLoader = this.getClass().getClassLoader();
         URL url = classLoader.getResource("");
