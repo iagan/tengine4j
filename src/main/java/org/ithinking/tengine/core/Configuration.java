@@ -6,7 +6,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.URL;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Properties;
 
 public class Configuration {
     private static final Logger logger = LoggerFactory.getLogger(Configuration.class);
@@ -28,6 +30,8 @@ public class Configuration {
     private String viewOutCharset;
     // tg.enable.perm
     private boolean enablePerm = true;
+    // 多版本控制(控制参数_v=v2)
+    private boolean multiVersion = false;
 
     // Web上下文路径
     private String webContextPath;
@@ -133,14 +137,23 @@ public class Configuration {
             String docBase = properties.getProperty("tg.doc.base");
             String charset = properties.getProperty("tg.view.charset");
             String enablePerm = properties.getProperty("tg.enable.perm");
-            logger.info("\n\n[loadProperties] tg.img.base={}, tg.view.prefix={}, tg.view.suffix={}, tg.doc.base={}, tg.view.charset={}, tg.enable.perm={}\n\n",
-                    imageBase, prefix, suffix, docBase, charset, enablePerm);
+            String multiVersion = properties.getProperty("tg.multi.version");
+            logger.info("\n\n[loadProperties] " +
+                            "tg.img.base={}, " +
+                            "tg.view.prefix={}, " +
+                            "tg.view.suffix={}, " +
+                            "tg.doc.base={}, " +
+                            "tg.view.charset={}, " +
+                            "tg.enable.perm={}," +
+                            "tg.multi.version={}\n\n",
+                    imageBase, prefix, suffix, docBase, charset, enablePerm, multiVersion);
             DEFAULT.imageBase = imageBase;
             DEFAULT.viewPrefix = prefix;
             DEFAULT.viewSuffix = suffix;
             DEFAULT.docBase = docBase;
             DEFAULT.viewCharset = charset;
             DEFAULT.enablePerm = Boolean.valueOf(XString.defVal(enablePerm, "false"));
+            DEFAULT.multiVersion = Boolean.valueOf(XString.defVal(multiVersion, "false"));
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -178,6 +191,7 @@ public class Configuration {
         this.viewPrefix = DEFAULT.viewPrefix;
         this.viewSuffix = DEFAULT.viewSuffix;
         this.enablePerm = DEFAULT.enablePerm;
+        this.multiVersion = DEFAULT.multiVersion;
     }
 
     public static Configuration getDefault() {
@@ -205,8 +219,10 @@ public class Configuration {
                     configuration.setViewSuffix(value == null ? null : value.trim());
                 } else if ("tg.view.outCharset".equals(key)) {
                     configuration.setViewOutCharset(value == null ? null : value.trim());
-                }  else if ("tg.enable.perm".equals(key)) {
+                } else if ("tg.enable.perm".equals(key)) {
                     configuration.setEnablePerm(Boolean.valueOf(XString.defVal(value, "false")));
+                } else if ("tg.multi.version".equals(key)) {
+                    configuration.setMultiVersion(Boolean.valueOf(XString.defVal(value, "false")));
                 }
             }
         }
@@ -219,6 +235,16 @@ public class Configuration {
     public void setEnablePerm(boolean enablePerm) {
         if (!isDefault) {
             this.enablePerm = enablePerm;
+        }
+    }
+
+    public boolean isMultiVersion() {
+        return multiVersion;
+    }
+
+    public void setMultiVersion(boolean multiVersion) {
+        if (!isDefault) {
+            this.multiVersion = multiVersion;
         }
     }
 
