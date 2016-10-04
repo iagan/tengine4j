@@ -1,6 +1,5 @@
 package org.ithinking.tengine.excel;
 
-import com.sun.xml.internal.messaging.saaj.util.ByteInputStream;
 import jxl.format.Colour;
 import jxl.format.UnderlineStyle;
 import jxl.write.WritableFont;
@@ -13,6 +12,7 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.ByteArrayInputStream;
 
 /**
  * Excel解析器
@@ -27,8 +27,7 @@ public class ExcelParser {
 
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = dbf.newDocumentBuilder();
-            ByteInputStream bis = new ByteInputStream();
-            bis.setBuf(text.getBytes("utf-8"));
+            ByteArrayInputStream bis = new ByteArrayInputStream(text.getBytes("utf-8"));
             Document doc = builder.parse(bis);
 
 
