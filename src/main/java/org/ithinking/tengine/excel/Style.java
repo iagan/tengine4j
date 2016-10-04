@@ -17,6 +17,16 @@ public class Style {
     private String color;
     // 字体风格(斜体/正常)
     private String fontStyle;
+    // 下划线样式
+    private String underline;
+
+
+    // 单元格对齐方式 Alignment.CENTRE
+    private String align;
+    // 背景颜色
+    private String background;
+    // Border
+
 
     public String getFontFamily() {
         return fontFamily;
@@ -56,5 +66,13 @@ public class Style {
 
     public void setFontStyle(String fontStyle) {
         this.fontStyle = fontStyle;
+    }
+
+    public String getUnderline() {
+        return underline;
+    }
+
+    public void setUnderline(String underline) {
+        this.underline = underline;
     }
 }

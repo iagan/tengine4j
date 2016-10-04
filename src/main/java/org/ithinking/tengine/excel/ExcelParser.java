@@ -1,6 +1,10 @@
 package org.ithinking.tengine.excel;
 
 import com.sun.xml.internal.messaging.saaj.util.ByteInputStream;
+import jxl.format.Colour;
+import jxl.format.UnderlineStyle;
+import jxl.write.WritableFont;
+import org.ithinking.tengine.XString;
 import org.ithinking.tengine.exception.ParserException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -134,6 +138,7 @@ public class ExcelParser {
         if (styleStr != null && !styleStr.trim().isEmpty()) {
             Style style = parseStyle(styleStr);
             cellDef.setStyle(style);
+            cellDef.setFont(createWritableFont(style));
         }
         return cellDef;
     }
@@ -154,6 +159,7 @@ public class ExcelParser {
         }
         return value.trim();
     }
+
 
     private Style parseStyle(String styleStr) {
         if (styleStr == null || styleStr.trim().isEmpty()) {
@@ -180,5 +186,152 @@ public class ExcelParser {
             }
         }
         return style;
+    }
+
+
+    /**
+     * 创建字体
+     *
+     * @param style
+     * @return
+     * @throws Exception
+     */
+    private WritableFont createWritableFont(Style style) {
+        try {
+            if (style == null) {
+                return null;
+            }
+            WritableFont writableFont = null;
+            // 字体名称
+            WritableFont.FontName fontName = null;
+            // 字体颜色
+            Colour colour = null;
+            // 字体大小
+            Integer fontSize = null;
+            // 下划线
+            UnderlineStyle underlineStyle = null;
+            // 是否粗体
+            Boolean boldStyle = null;
+            // 是否斜体
+            Boolean italic = null;
+
+            /**
+             * 字体名称
+             */
+            if (XString.isNotBlank(style.getFontFamily())) {
+                if ("Arial".equalsIgnoreCase(style.getFontFamily())) {
+                    fontName = WritableFont.ARIAL;
+                } else if ("Times New Roman".equalsIgnoreCase(style.getFontFamily())) {
+                    fontName = WritableFont.TIMES;
+                } else if ("Courier New".equalsIgnoreCase(style.getFontFamily())) {
+                    fontName = WritableFont.COURIER;
+                } else if ("Tahoma".equalsIgnoreCase(style.getFontFamily())) {
+                    fontName = WritableFont.TAHOMA;
+                } else {
+                    fontName = WritableFont.createFont(style.getFontFamily());
+                }
+            }
+
+            /**
+             * 字体颜色
+             */
+            if (XString.isNotBlank(style.getColor())) {
+                Colour[] colours = Colour.getAllColours();
+                for (Colour c : colours) {
+                    if (c.getDescription().equalsIgnoreCase(style.getColor())) {
+                        colour = c;
+                        break;
+                    }
+                }
+            }
+
+            /**
+             * 字体大小
+             */
+            if (XString.isNotBlank(style.getFontSize())) {
+                fontSize = Integer.parseInt(style.getFontSize());
+            }
+
+            /**
+             * 下划线
+             */
+            if (XString.isNotBlank(style.getUnderline())) {
+                if (UnderlineStyle.NO_UNDERLINE.getDescription().equalsIgnoreCase(style.getUnderline())) {
+                    underlineStyle = UnderlineStyle.NO_UNDERLINE;
+                }
+                if (UnderlineStyle.DOUBLE.getDescription().equalsIgnoreCase(style.getUnderline())) {
+                    underlineStyle = UnderlineStyle.DOUBLE;
+                }
+                if (UnderlineStyle.DOUBLE_ACCOUNTING.getDescription().equalsIgnoreCase(style.getUnderline())) {
+                    underlineStyle = UnderlineStyle.DOUBLE_ACCOUNTING;
+                }
+                if (UnderlineStyle.SINGLE.getDescription().equalsIgnoreCase(style.getUnderline())) {
+                    underlineStyle = UnderlineStyle.SINGLE;
+                }
+                if (UnderlineStyle.SINGLE_ACCOUNTING.getDescription().equalsIgnoreCase(style.getUnderline())) {
+                    underlineStyle = UnderlineStyle.SINGLE_ACCOUNTING;
+                }
+            }
+
+            /**
+             * 是否粗体
+             */
+            if (XString.isNotBlank(style.getFontWeight())) {
+                if ("none".equalsIgnoreCase(style.getFontWeight())) {
+                    boldStyle = false;
+                } else if ("bold".equalsIgnoreCase(style.getFontWeight())) {
+                    boldStyle = true;
+                } else if ("Normal".equalsIgnoreCase(style.getFontWeight())) {
+                    boldStyle = false;
+                }
+            }
+
+            /**
+             * 字体风格(正常/斜体)
+             */
+            if (XString.isNotBlank(style.getFontStyle())) {
+                if ("normal".equalsIgnoreCase(style.getFontStyle())) {
+                    italic = false;
+                } else if ("italic".equalsIgnoreCase(style.getFontStyle())) {
+                    italic = true;
+                } else if ("oblique".equalsIgnoreCase(style.getFontStyle())) {
+                    // italic = true;
+                }
+            }
+
+
+            if (fontName != null || colour != null || fontSize != null || underlineStyle != null || boldStyle != null || italic != null) {
+                if (fontName == null) {
+                    fontName = WritableFont.ARIAL;
+                    writableFont = new WritableFont(fontName);
+
+                }
+                if (colour != null) {
+                    writableFont.setColour(colour);
+                }
+                if (fontSize != null) {
+                    writableFont.setPointSize(fontSize);
+                }
+                if (underlineStyle != null) {
+                    writableFont.setUnderlineStyle(underlineStyle);
+                }
+
+                if (italic != null) {
+                    writableFont.setItalic(italic);
+                }
+
+                if (boldStyle != null) {
+                    if (boldStyle == true) {
+                        writableFont.setBoldStyle(WritableFont.BOLD);
+                    } else {
+                        writableFont.setBoldStyle(WritableFont.NO_BOLD);
+                    }
+                }
+            }
+            return writableFont;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
