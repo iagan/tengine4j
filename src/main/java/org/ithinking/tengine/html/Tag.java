@@ -210,21 +210,38 @@ public class Tag extends AbstractRender {
             int size = list == null ? 0 : list.size();
             if (size > 0) {
                 Object obj;
-                String key = repeatAttr.getParam();
+                boolean isBody = "body".equals(repeatAttr.getParam1());
+                String key = isBody ? repeatAttr.getParam2() : repeatAttr.getParam();
                 if (key == null || key.isEmpty()) {
                     key = "$item";
                 }
+
                 Indicator index = new Indicator();
                 index.setSize(size);
                 context.add("$stat", index);
+
+                // 遍历主体，则需要先输出上层
+                if (isBody) {
+                    this.renderStartTag(context);
+                }
+
                 for (int i = 0, row = 1; i < size; i++) {
                     obj = list.get(i);
                     index.setIndex(i);
                     context.add(key, obj);
                     if (this.isContinue(context)) {
                         index.setRow(row++);
-                        this.renderTag(context);
+                        if (isBody) {
+                            this.renderBody(context);
+                        } else {
+                            this.renderTag(context);
+                        }
                     }
+                }
+
+                // 结束标签
+                if (isBody) {
+                    this.renderEndTag(context);
                 }
             }
         } finally {

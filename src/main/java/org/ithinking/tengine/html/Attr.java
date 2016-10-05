@@ -10,6 +10,9 @@ import org.ithinking.tengine.expr.ExpressionFactory;
 public class Attr extends AbstractRender {
     private String name;
     private String param;
+    private String param1;
+    private String param2;
+    private String param3;
     private String value;
     private String strChar = "";
     private DIRECTIVE type;
@@ -132,6 +135,30 @@ public class Attr extends AbstractRender {
 
     public void setParam(String param) {
         this.param = param;
+    }
+
+    public String getParam1() {
+        return param1;
+    }
+
+    public void setParam1(String param1) {
+        this.param1 = param1;
+    }
+
+    public String getParam2() {
+        return param2;
+    }
+
+    public void setParam2(String param2) {
+        this.param2 = param2;
+    }
+
+    public String getParam3() {
+        return param3;
+    }
+
+    public void setParam3(String param3) {
+        this.param3 = param3;
     }
 
     public String getStrChar() {
