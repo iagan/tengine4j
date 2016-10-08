@@ -9,7 +9,7 @@ import java.util.List;
  * @author agan
  * @date 2016-10-02
  */
-public class RowDef {
+public class RowDef extends NodeDef{
     // 行高
     private Integer height;
 

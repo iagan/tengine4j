@@ -9,7 +9,7 @@ import jxl.write.WritableFont;
  * @author agan
  * @date 2016-10-02
  */
-public class CellDef {
+public class CellDef extends NodeDef{
     // 单元格内容
     private String text;
     // 单元格位置
@@ -25,7 +25,7 @@ public class CellDef {
     // 单元格格式化
     private WritableCellFormat format;
 
-    private Style style;
+
 
 
     public String getText() {
@@ -76,11 +76,5 @@ public class CellDef {
         this.format = format;
     }
 
-    public Style getStyle() {
-        return style;
-    }
 
-    public void setStyle(Style style) {
-        this.style = style;
-    }
 }

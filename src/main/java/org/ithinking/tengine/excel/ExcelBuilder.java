@@ -23,6 +23,14 @@ public class ExcelBuilder {
         ExcelParser reader = new ExcelParser();
         WorkbookDef workbookDef = reader.parse(tplText);
 
+        ExcelContext context = new ExcelContext();
+        context.setOs(os);
+
+        workbookDef.create(context);
+
+
+
+
 
         WritableWorkbook writableWorkbook = createWritableWorkbook(workbookDef);
         List<SheetDef> sheetDefs = workbookDef.getSheetDefs();

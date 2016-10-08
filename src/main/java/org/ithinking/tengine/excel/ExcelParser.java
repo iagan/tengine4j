@@ -103,6 +103,11 @@ public class ExcelParser {
         }
     }
 
+    private void readNodeDef(NodeDef nodeDef, Element elm) {
+        nodeDef.setForeach(readString(elm, "for"));
+        nodeDef.setForeach(readString(elm, "if"));
+        nodeDef.setContinueExpr(readString(elm, "continue"));
+    }
 
     private WorkbookDef createWorkbookDef(Element workbook) {
         WorkbookDef workbookDef = new WorkbookDef();
@@ -112,10 +117,11 @@ public class ExcelParser {
     private SheetDef createSheetDef(Element sheetElm) {
         SheetDef sheetDef = new SheetDef();
         //
-        sheetDef.setName(sheetElm.getAttribute("name"));
+        sheetDef.setName(readString(sheetElm, "name"));
         sheetDef.setRowHeight(readInt(sheetElm, "row-height"));
         sheetDef.setColWidth(readInt(sheetElm, "col-width"));
         //
+        readNodeDef(sheetDef, sheetElm);
         return sheetDef;
     }
 
@@ -123,6 +129,9 @@ public class ExcelParser {
         RowDef rowDef = new RowDef();
         rowDef.setIndex(readInt(rowElm, "index"));
         rowDef.setHeight(readInt(rowElm, "height"));
+        //
+        readNodeDef(rowDef, rowElm);
+        //
         return rowDef;
     }
 
