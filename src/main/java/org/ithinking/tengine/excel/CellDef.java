@@ -26,7 +26,10 @@ public class CellDef extends NodeDef{
     private WritableCellFormat format;
 
 
+    @Override
+    public void create(ExcelContext context) {
 
+    }
 
     public String getText() {
         return text;

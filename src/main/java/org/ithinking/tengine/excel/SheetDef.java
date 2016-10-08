@@ -9,7 +9,7 @@ import java.util.List;
  * @author agan
  * @date 2016-10-02
  */
-public class SheetDef extends NodeDef{
+public class SheetDef extends NodeDef {
     // 默认行高
     private Integer rowHeight;
     // 默认列宽
@@ -30,6 +30,12 @@ public class SheetDef extends NodeDef{
 
     @Override
     public void create(ExcelContext context) {
+
+        if (rowDefs != null && !rowDefs.isEmpty()) {
+            for (RowDef rowDef : rowDefs) {
+                rowDef.create(context);
+            }
+        }
 
     }
 

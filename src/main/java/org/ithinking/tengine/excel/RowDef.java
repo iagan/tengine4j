@@ -9,7 +9,7 @@ import java.util.List;
  * @author agan
  * @date 2016-10-02
  */
-public class RowDef extends NodeDef{
+public class RowDef extends NodeDef {
     // 行高
     private Integer height;
 
@@ -23,6 +23,15 @@ public class RowDef extends NodeDef{
             cellDefs = new ArrayList<>();
         }
         cellDefs.add(cellDef);
+    }
+
+    @Override
+    public void create(ExcelContext context) {
+        if (cellDefs != null && !cellDefs.isEmpty()) {
+            for (CellDef cellDef : cellDefs) {
+                cellDef.create(context);
+            }
+        }
     }
 
     public Integer getHeight() {
