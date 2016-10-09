@@ -1,7 +1,5 @@
 package org.ithinking.tengine.excel;
 
-import jxl.write.WritableSheet;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,12 +27,28 @@ public class RowDef extends NodeDef {
 
     @Override
     protected void createOne(ExcelContext context, Object dataOne, int offset) {
+        applyStyle(context);
+        // 每行都要重置列下标，从0开始计数
+        int col = 0;
         if (cellDefs != null && !cellDefs.isEmpty()) {
             for (CellDef cellDef : cellDefs) {
+                context.setCurrentCol(col++);
                 cellDef.create(context);
             }
         }
     }
+
+
+    private void applyStyle(ExcelContext context) {
+        try {
+            if (this.getHeight() != null) {
+                context.getCurrentSheet().setRowView(context.getCurrentRow(), this.getHeight(), false);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public Integer getHeight() {
         return height;

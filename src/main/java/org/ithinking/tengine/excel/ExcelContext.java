@@ -25,6 +25,9 @@ public class ExcelContext extends DefContext {
 
     private WritableSheet currentSheet;
 
+    private Integer currentRow;
+    private Integer currentCol;
+
     public OutputStream getOs() {
         return os;
     }
@@ -47,5 +50,21 @@ public class ExcelContext extends DefContext {
 
     public void setCurrentSheet(WritableSheet currentSheet) {
         this.currentSheet = currentSheet;
+    }
+
+    public Integer getCurrentRow() {
+        return currentRow;
+    }
+
+    public void setCurrentRow(Integer currentRow) {
+        this.currentRow = currentRow;
+    }
+
+    public Integer getCurrentCol() {
+        return currentCol;
+    }
+
+    public void setCurrentCol(Integer currentCol) {
+        this.currentCol = currentCol;
     }
 }

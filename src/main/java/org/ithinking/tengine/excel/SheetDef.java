@@ -34,9 +34,11 @@ public class SheetDef extends NodeDef {
     public void createOne(ExcelContext context, Object dataOne, int offset) {
         WritableSheet currentSheet = ExcelHelper.createSheet(context.getWorkbook(), this, offset);
         context.setCurrentSheet(currentSheet);
-        //
+        // 每个sheet都要重置行下标,从0开始计数
+        int row = 0;
         if (rowDefs != null && !rowDefs.isEmpty()) {
             for (RowDef rowDef : rowDefs) {
+                context.setCurrentRow(row++);
                 rowDef.create(context);
             }
         }

@@ -1,5 +1,6 @@
 package org.ithinking.tengine.excel;
 
+import jxl.write.Label;
 import jxl.write.WritableCellFormat;
 import jxl.write.WritableFont;
 
@@ -9,13 +10,7 @@ import jxl.write.WritableFont;
  * @author agan
  * @date 2016-10-02
  */
-public class CellDef extends NodeDef{
-    // 单元格内容
-    private String text;
-    // 单元格位置
-    private Integer index;
-    // 单元格宽度
-    private Integer width;
+public class CellDef extends NodeDef {
     // 数据类型
     private String type;
 
@@ -27,33 +22,31 @@ public class CellDef extends NodeDef{
 
 
     @Override
-    public void create(ExcelContext context) {
-
+    protected void createOne(ExcelContext context, Object dataOne, int offset) {
+        try {
+            Label label = createCell(context);
+            context.getCurrentSheet().addCell(label);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
     }
 
-    public String getText() {
-        return text;
+
+    public Label createCell(ExcelContext context) throws Exception {
+        Object val = this.getTextValue(context);
+        Label label = new Label(context.getCurrentCol(), context.getCurrentRow(), val.toString());
+        return label;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    private void applyStyle(ExcelContext context) {
+        try {
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    public Integer getIndex() {
-        return index;
-    }
-
-    public void setIndex(Integer index) {
-        this.index = index;
-    }
-
-    public Integer getWidth() {
-        return width;
-    }
-
-    public void setWidth(Integer width) {
-        this.width = width;
-    }
 
     public String getType() {
         return type;

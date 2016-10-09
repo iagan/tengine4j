@@ -139,6 +139,18 @@ public abstract class NodeDef {
         }
     }
 
+    public Object getTextValue(ExcelContext context) {
+        return getTextValue(context, null);
+    }
+
+    public Object getTextValue(ExcelContext context, String def) {
+        if (this.text == null) {
+            return "";
+        }
+        Object val = text.execute(context);
+        return val == null ? def : val;
+    }
+
     public void setIfExpr(String exp) {
         if (XString.isNotBlank(exp)) {
             ifExpr = ExpressionFactory.createExpression(exp);
