@@ -1,5 +1,7 @@
 package org.ithinking.tengine.excel;
 
+import jxl.write.WritableSheet;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,14 +31,15 @@ public class SheetDef extends NodeDef {
 
 
     @Override
-    public void create(ExcelContext context) {
-
+    public void createOne(ExcelContext context, Object dataOne, int offset) {
+        WritableSheet currentSheet = ExcelHelper.createSheet(context.getWorkbook(), this, offset);
+        context.setCurrentSheet(currentSheet);
+        //
         if (rowDefs != null && !rowDefs.isEmpty()) {
             for (RowDef rowDef : rowDefs) {
                 rowDef.create(context);
             }
         }
-
     }
 
     public Integer getRowHeight() {

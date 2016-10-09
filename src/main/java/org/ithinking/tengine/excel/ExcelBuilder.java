@@ -23,7 +23,7 @@ public class ExcelBuilder {
         ExcelParser reader = new ExcelParser();
         WorkbookDef workbookDef = reader.parse(tplText);
 
-        ExcelContext context = new ExcelContext();
+        ExcelContext context = new ExcelContext(null);
         context.setOs(os);
 
         workbookDef.create(context);
@@ -36,7 +36,7 @@ public class ExcelBuilder {
         List<SheetDef> sheetDefs = workbookDef.getSheetDefs();
         for (int i = 0, iLen = sheetDefs.size(); i < iLen; i++) {
             SheetDef sheetDef = sheetDefs.get(i);
-            WritableSheet writableSheet = createSheet(writableWorkbook, sheetDef, i);
+            WritableSheet writableSheet = ExcelHelper.createSheet(writableWorkbook, sheetDef, i);
             //
             List<RowDef> rowDefs = sheetDef.getRowDefs();
             for (int j = 0, row = 0, jLen = rowDefs.size(); j < jLen; j++) {
@@ -69,36 +69,7 @@ public class ExcelBuilder {
         return wwb;
     }
 
-    public WritableSheet createSheet(WritableWorkbook wwb, SheetDef sheetDef, int index) {
 
-        String name = sheetDef.getName();
-        if (name == null || name.trim().isEmpty()) {
-            name = "sheet";
-        }
-
-        WritableSheet sheet = wwb.createSheet(name, index);
-
-        /**
-         CellView navCellView = new CellView();
-         navCellView.setAutosize(true); //设置自动大小
-         navCellView.setSize(12);
-         // sheet.mergeCells(0,0,navTitle.length-1,0);
-         //设置col显示样式
-         sheet.setColumnView(0, navCellView);
-         **/
-
-
-        Integer rowHeight = sheetDef.getRowHeight();
-        if (rowHeight != null) {
-            sheet.getSettings().setDefaultRowHeight(rowHeight);
-        }
-
-        Integer colWidth = sheetDef.getColWidth();
-        if (colWidth != null) {
-            sheet.getSettings().setDefaultColumnWidth(colWidth);
-        }
-        return sheet;
-    }
 
     public void formatRow(WritableSheet sheet, int row, RowDef rowDef) throws Exception {
         //设置行高

@@ -1,6 +1,5 @@
 package org.ithinking.tengine.core;
 
-import java.io.IOException;
 import java.util.Map;
 
 public interface Context extends Map<String,Object>{

@@ -1,5 +1,7 @@
 package org.ithinking.tengine.excel;
 
+import jxl.write.WritableSheet;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +28,7 @@ public class RowDef extends NodeDef {
     }
 
     @Override
-    public void create(ExcelContext context) {
+    protected void createOne(ExcelContext context, Object dataOne, int offset) {
         if (cellDefs != null && !cellDefs.isEmpty()) {
             for (CellDef cellDef : cellDefs) {
                 cellDef.create(context);
