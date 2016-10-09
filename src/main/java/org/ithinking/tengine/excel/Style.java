@@ -1,5 +1,8 @@
 package org.ithinking.tengine.excel;
 
+import jxl.write.WritableCellFormat;
+import jxl.write.WritableFont;
+
 /**
  * 样式
  *
@@ -26,6 +29,13 @@ public class Style {
     // 背景颜色
     private String background;
     // Border
+
+
+    // 字体
+    private WritableFont font;
+
+    // 单元格格式化
+    private WritableCellFormat format;
 
 
     public String getFontFamily() {
@@ -74,5 +84,23 @@ public class Style {
 
     public void setUnderline(String underline) {
         this.underline = underline;
+    }
+
+
+
+    public WritableFont getFont() {
+        return font;
+    }
+
+    public void setFont(WritableFont font) {
+        this.font = font;
+    }
+
+    public WritableCellFormat getFormat() {
+        return format;
+    }
+
+    public void setFormat(WritableCellFormat format) {
+        this.format = format;
     }
 }

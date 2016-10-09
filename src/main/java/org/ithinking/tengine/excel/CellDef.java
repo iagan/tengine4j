@@ -14,11 +14,7 @@ public class CellDef extends NodeDef {
     // 数据类型
     private String type;
 
-    // 字体
-    private WritableFont font;
 
-    // 单元格格式化
-    private WritableCellFormat format;
 
 
     @Override
@@ -55,22 +51,5 @@ public class CellDef extends NodeDef {
     public void setType(String type) {
         this.type = type;
     }
-
-    public WritableFont getFont() {
-        return font;
-    }
-
-    public void setFont(WritableFont font) {
-        this.font = font;
-    }
-
-    public WritableCellFormat getFormat() {
-        return format;
-    }
-
-    public void setFormat(WritableCellFormat format) {
-        this.format = format;
-    }
-
 
 }

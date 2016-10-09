@@ -169,12 +169,12 @@ public class TagParser {
         Attr attr = createAttr(directiveName, declareName);
         if (XString.isNotBlank(directiveParam)) {
             String[] params = directiveParam.split("\\-");
-            attr.setParam(this.toHumpName(directiveParam));
+            attr.setParam(XString.toHumpName(directiveParam));
             attr.setParam1(params[0]);
-            if(params.length > 1){
+            if (params.length > 1) {
                 attr.setParam2(params[1]);
             }
-            if(params.length > 2){
+            if (params.length > 2) {
                 attr.setParam3(params[2]);
             }
         }
@@ -271,19 +271,6 @@ public class TagParser {
         return declareName;
     }
 
-    /**
-     * 转换为驼峰命名
-     *
-     * @param name
-     * @return
-     */
-    private String toHumpName(String name) {
-        int i = 0;
-        while ((i = name.indexOf("-")) != -1) {
-            name = name.substring(0, i) + Character.toUpperCase(name.charAt(i + 1)) + name.substring(i + 2);
-        }
-        return name;
-    }
 
     /**
      * 是否存在属性值<br>

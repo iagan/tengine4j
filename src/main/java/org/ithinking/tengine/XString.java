@@ -163,4 +163,18 @@ public class XString {
 
         return sb.toString();
     }
+
+    /**
+     * 转换为驼峰命名
+     *
+     * @param name
+     * @return
+     */
+    public static String toHumpName(String name) {
+        int i;
+        while ((i = name.indexOf("-")) != -1) {
+            name = name.substring(0, i) + Character.toUpperCase(name.charAt(i + 1)) + name.substring(i + 2);
+        }
+        return name;
+    }
 }

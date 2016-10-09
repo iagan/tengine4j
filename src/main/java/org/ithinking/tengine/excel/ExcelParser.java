@@ -5,10 +5,7 @@ import jxl.format.UnderlineStyle;
 import jxl.write.WritableFont;
 import org.ithinking.tengine.XString;
 import org.ithinking.tengine.exception.ParserException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -103,10 +100,49 @@ public class ExcelParser {
         }
     }
 
+    /**
+     * 读取公共指令和Style
+     *
+     * @param nodeDef
+     * @param elm
+     */
     private void readNodeDef(NodeDef nodeDef, Element elm) {
-        nodeDef.setForeach(readString(elm, "for"));
-        nodeDef.setForeach(readString(elm, "if"));
-        nodeDef.setContinueExpr(readString(elm, "continue"));
+        NamedNodeMap attrs = elm.getAttributes();
+        for (int i = 0, len = attrs == null ? 0 : attrs.getLength(); i < len; i++) {
+            Node attr = attrs.item(i);
+            String name = attr.getLocalName().trim();
+            String val = attr.getNodeValue();
+            if (XString.isBlank(val)) {
+                continue;
+            }
+            if ("if".equalsIgnoreCase(name)) {
+                nodeDef.setIfExpr(val);
+            } else if ("continue".equalsIgnoreCase(name)) {
+                nodeDef.setContinueExpr(val);
+            } else if ("for".equalsIgnoreCase(name)) {
+                nodeDef.setForeach(null, val);
+            } else if (name.startsWith("for-")) {
+                String param = name.substring(4);
+                nodeDef.setForeach(XString.toHumpName(param), val);
+            } else if ("index".equalsIgnoreCase(name)) {
+                nodeDef.setIndex(Integer.parseInt(val));
+            } else if ("width".equals(name)) {
+
+            } else if ("style".equalsIgnoreCase(name)) {
+                Style style = parseStyle(val);
+                if (style != null) {
+                    nodeDef.setStyle(style);
+                    style.setFont(createWritableFont(style));
+                }
+            }
+
+        }
+
+        String text = elm.getTextContent();
+        if (XString.isNotBlank(text)) {
+            nodeDef.setText(text);
+        }
+
     }
 
     private WorkbookDef createWorkbookDef(Element workbook) {
@@ -137,17 +173,8 @@ public class ExcelParser {
 
     private CellDef createCellDef(Element cellElm) {
         CellDef cellDef = new CellDef();
-        cellDef.setText(cellElm.getTextContent());
-        cellDef.setIndex(readInt(cellElm, "index"));
-        cellDef.setType(readString(cellElm, "type"));
-        cellDef.setWidth(readInt(cellElm, "width"));
-        //
-        String styleStr = readString(cellElm, "style");
-        if (styleStr != null && !styleStr.trim().isEmpty()) {
-            Style style = parseStyle(styleStr);
-            cellDef.setStyle(style);
-            cellDef.setFont(createWritableFont(style));
-        }
+        String type = readString(cellElm, "type");
+        cellDef.setType(type);
         return cellDef;
     }
 
