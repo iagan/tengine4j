@@ -110,7 +110,7 @@ public class ExcelParser {
         NamedNodeMap attrs = elm.getAttributes();
         for (int i = 0, len = attrs == null ? 0 : attrs.getLength(); i < len; i++) {
             Node attr = attrs.item(i);
-            String name = attr.getLocalName().trim();
+            String name = attr.getNodeName();
             String val = attr.getNodeValue();
             if (XString.isBlank(val)) {
                 continue;
@@ -138,7 +138,8 @@ public class ExcelParser {
 
         }
 
-        String text = elm.getTextContent();
+
+        String text = readOnlyText(elm);
         if (XString.isNotBlank(text)) {
             nodeDef.setText(text);
         }
@@ -147,6 +148,9 @@ public class ExcelParser {
 
     private WorkbookDef createWorkbookDef(Element workbook) {
         WorkbookDef workbookDef = new WorkbookDef();
+        //
+        readNodeDef(workbookDef, workbook);
+        //
         return workbookDef;
     }
 
@@ -175,6 +179,9 @@ public class ExcelParser {
         CellDef cellDef = new CellDef();
         String type = readString(cellElm, "type");
         cellDef.setType(type);
+        //
+        readNodeDef(cellDef, cellElm);
+        //
         return cellDef;
     }
 
@@ -193,6 +200,29 @@ public class ExcelParser {
             return null;
         }
         return value.trim();
+    }
+
+    /**
+     * 获取元素的文本值，如果元素包含子元素，则返回null
+     *
+     * @param elm
+     * @return
+     */
+    private String readOnlyText(Element elm) {
+        NodeList nodeList = elm.getChildNodes();
+        StringBuilder sb = new StringBuilder();
+        Node node;
+        for (int i = 0, len = nodeList == null ? 0 : nodeList.getLength(); i < len; i++) {
+            node = nodeList.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                return null;
+            }
+            if(node.getNodeType() == Node.TEXT_NODE){
+                sb.append(node.getNodeValue());
+            }
+
+        }
+        return sb.toString();
     }
 
 

@@ -167,7 +167,6 @@ public abstract class NodeDef {
     public void setText(String exp) {
         if (XString.isNotBlank(exp)) {
             text = ExpressionFactory.createCompositeExpression(exp);
-
         }
     }
 

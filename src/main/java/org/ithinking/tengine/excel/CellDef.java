@@ -14,9 +14,6 @@ public class CellDef extends NodeDef {
     // 数据类型
     private String type;
 
-
-
-
     @Override
     protected void createOne(ExcelContext context, Object dataOne, int offset) {
         try {
