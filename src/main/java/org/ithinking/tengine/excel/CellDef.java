@@ -1,8 +1,6 @@
 package org.ithinking.tengine.excel;
 
 import jxl.write.Label;
-import jxl.write.WritableCellFormat;
-import jxl.write.WritableFont;
 
 /**
  * CellDef

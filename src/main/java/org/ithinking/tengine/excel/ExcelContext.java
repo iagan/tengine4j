@@ -3,8 +3,11 @@ package org.ithinking.tengine.excel;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import org.ithinking.tengine.DefContext;
+import org.ithinking.tengine.HttpServletRequestContext;
 import org.ithinking.tengine.core.TemplateEngine;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.OutputStream;
 
 /**
@@ -13,10 +16,17 @@ import java.io.OutputStream;
  * @author agan
  * @date 2016-10-08
  */
-public class ExcelContext extends DefContext {
+public class ExcelContext extends HttpServletRequestContext {
+
+    public ExcelContext(TemplateEngine engine,
+                        HttpServletRequest request,
+                        HttpServletResponse response,
+                        String charset) {
+        super(engine, request, response, charset);
+    }
 
     public ExcelContext(TemplateEngine engine) {
-        super(engine);
+        super(engine, null, null, null);
     }
 
     private OutputStream os;
