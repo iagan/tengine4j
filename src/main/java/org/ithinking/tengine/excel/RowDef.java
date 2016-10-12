@@ -26,19 +26,28 @@ public class RowDef extends NodeDef {
     }
 
     @Override
-    protected int getOffset(ExcelContext context) {
-        return context.getCurrentRow() + this.getIndex();
+    protected void startDef(ExcelContext context) {
+        context.setCurrentCol(0);
     }
 
     @Override
-    protected void createOne(ExcelContext context, Object dataOne, int offset) {
+    protected void endDef(ExcelContext context) {
+
+    }
+
+
+    @Override
+    protected void createOne(ExcelContext context, Object dataOne) {
+
+        //context.setCurrentRow(context.getCurrentRow() + index);
+
         applyStyle(context);
         // 每行都要重置列下标，从0开始计数
-        int col = 0;
+        context.setCurrentCol(0);
         if (cellDefs != null && !cellDefs.isEmpty()) {
             for (CellDef cellDef : cellDefs) {
-                context.setCurrentCol(col++);
                 cellDef.create(context);
+                context.incrementCol();
             }
         }
     }

@@ -30,13 +30,20 @@ public class SheetDef extends NodeDef {
     }
 
     @Override
-    protected int getOffset(ExcelContext context) {
-        return this.getIndex();
+    protected void startDef(ExcelContext context) {
+        context.setCurrentRow(0);
+        context.setCurrentCol(0);
     }
 
     @Override
-    public void createOne(ExcelContext context, Object dataOne, int offset) {
-        WritableSheet currentSheet = ExcelHelper.createSheet(context.getWorkbook(), this, offset);
+    protected void endDef(ExcelContext context) {
+        context.setCurrentRow(0);
+        context.setCurrentCol(0);
+    }
+
+    @Override
+    public void createOne(ExcelContext context, Object dataOne) {
+        WritableSheet currentSheet = ExcelHelper.createSheet(context.getWorkbook(), this, this.getIndex());
         context.setCurrentSheet(currentSheet);
         // 每个sheet都要重置行下标,从0开始计数
         if (rowDefs != null && !rowDefs.isEmpty()) {

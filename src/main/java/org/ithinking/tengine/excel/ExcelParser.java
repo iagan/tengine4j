@@ -185,9 +185,10 @@ public class ExcelParser {
 
     private CellDef createCellDef(Element cellElm) {
         CellDef cellDef = new CellDef();
-        String type = readString(cellElm, "type");
-        cellDef.setType(type);
+        cellDef.setType(readString(cellElm, "type"));
         cellDef.setWidth(readInt(cellElm, "width"));
+        cellDef.setRowspan(readInt(cellElm, "rowspan"));
+        cellDef.setColspan(readInt(cellElm, "colspan"));
         //
         readNodeDef(cellDef, cellElm);
         //

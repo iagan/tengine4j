@@ -16,19 +16,49 @@ public class CellDef extends NodeDef {
 
     private Integer width;
 
+    // 跨行数量(单元格合并)
+    private Integer rowspan;
+
+    // 跨列数量(单元格合并)
+    private Integer colspan;
+
+
     @Override
-    protected int getOffset(ExcelContext context) {
-        return context.getCurrentCol() + this.getIndex();
+    protected void startDef(ExcelContext context) {
+
     }
 
     @Override
-    protected void createOne(ExcelContext context, Object dataOne, int offset) {
+    protected void endDef(ExcelContext context) {
+
+    }
+
+    @Override
+    protected void createOne(ExcelContext context, Object dataOne) {
         try {
+            int col1 = context.getCurrentCol();
+            int row1 = context.getCurrentRow();
             Label label = createCell(context);
             if (this.getWidth() != null) {
-                context.getCurrentSheet().setColumnView(offset, this.getWidth());
+                context.getCurrentSheet().setColumnView(col1, this.getWidth());
             }
             context.getCurrentSheet().addCell(label);
+
+
+            // 合并单元格
+            if (this.rowspan != null && this.rowspan > 1) {
+                if (this.colspan != null && this.colspan > 1) {
+                    context.getCurrentSheet().mergeCells(col1, row1, col1 + colspan - 1, row1 + rowspan - 1);
+                    context.setCurrentRow(row1 + rowspan);
+                    context.setCurrentCol(col1 + colspan);
+                } else {
+                    context.getCurrentSheet().mergeCells(col1, row1, col1, row1 + rowspan - 1);
+                    context.setCurrentRow(row1 + rowspan);
+                }
+            } else if (this.colspan != null && this.colspan > 1) {
+                context.getCurrentSheet().mergeCells(col1, row1, col1 + colspan - 1, row1);
+                context.setCurrentCol(col1 + colspan);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
@@ -38,12 +68,8 @@ public class CellDef extends NodeDef {
 
     public Label createCell(ExcelContext context) throws Exception {
         Object val = this.getTextValue(context);
-
-        WritableFont font = null;
         WritableCellFormat format = null;
-
         if (this.getStyle() != null) {
-            font = this.getStyle().getFont();
             format = this.getStyle().getFormat();
         }
 
@@ -70,5 +96,21 @@ public class CellDef extends NodeDef {
 
     public void setWidth(Integer width) {
         this.width = width;
+    }
+
+    public Integer getRowspan() {
+        return rowspan;
+    }
+
+    public void setRowspan(Integer rowspan) {
+        this.rowspan = rowspan;
+    }
+
+    public Integer getColspan() {
+        return colspan;
+    }
+
+    public void setColspan(Integer colspan) {
+        this.colspan = colspan;
     }
 }

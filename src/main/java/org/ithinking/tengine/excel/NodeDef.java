@@ -31,9 +31,11 @@ public abstract class NodeDef {
     private String forVarName;
 
 
-    protected abstract int getOffset(ExcelContext context);
+    protected abstract void startDef(ExcelContext context);
 
-    protected abstract void createOne(ExcelContext context, Object dataOne, int offset);
+    protected abstract void createOne(ExcelContext context, Object dataOne);
+
+    protected abstract void endDef(ExcelContext context);
 
 
     private boolean isTrue(Object obj) {
@@ -101,7 +103,7 @@ public abstract class NodeDef {
         String varName = forVarName;
         Object dataOne;
         if (source != null) {
-            int offset = this.getOffset(context);
+            this.startDef(context);
             if (source instanceof List) {
                 // 列表
                 List list = (List) source;
@@ -109,9 +111,7 @@ public abstract class NodeDef {
                     dataOne = list.get(i);
                     context.add(varName, dataOne);
                     if (isContinue(context)) {
-                        context.setCurrentRow(offset);
-                        this.createOne(context, dataOne, offset);
-                        offset++;
+                        this.createOne(context, dataOne);
                     }
                 }
             } else if (source.getClass().isArray()) {
@@ -121,12 +121,13 @@ public abstract class NodeDef {
                     dataOne = array[i];
                     context.add(varName, dataOne);
                     if (isContinue(context)) {
-                        context.setCurrentRow(offset);
-                        this.createOne(context, dataOne, offset);
-                        offset++;
+                        this.createOne(context, dataOne);
                     }
                 }
+            } else {
+                throw new IllegalArgumentException("暂时不支持其他数据源类型");
             }
+            this.endDef(context);
         }
     }
 
@@ -141,7 +142,9 @@ public abstract class NodeDef {
             if (isForeach(context)) {
                 foreach(context);
             } else {
-                createOne(context, null, 0);
+                this.startDef(context);
+                createOne(context, null);
+                this.endDef(context);
             }
         }
     }

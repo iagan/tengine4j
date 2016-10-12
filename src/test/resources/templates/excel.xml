@@ -2,7 +2,7 @@
 <Workbook name="${owner}的用户务表-${date}.xls">
     <Sheet name="任务列表" row-height="255" col-width="8" style="">
         <row height="500">
-            <cell width="100">jjj</cell>
+            <cell width="100" colspan2="3">jjj</cell> <cell>紧接着</cell> <cell index="9">10列</cell>
         </row>
         <row for-user="userList">
             <cell>${user.name}</cell>

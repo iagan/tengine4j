@@ -29,6 +29,16 @@ public class WorkbookDef extends NodeDef {
     }
 
     @Override
+    protected void startDef(ExcelContext context) {
+
+    }
+
+    @Override
+    protected void endDef(ExcelContext context) {
+
+    }
+
+    @Override
     public void create(ExcelContext context) {
         WritableWorkbook wwb = null;
         try {
@@ -44,13 +54,8 @@ public class WorkbookDef extends NodeDef {
     }
 
     @Override
-    protected void createOne(ExcelContext context, Object dataOne, int offset) {
+    protected void createOne(ExcelContext context, Object dataOne) {
 
-    }
-
-    @Override
-    protected int getOffset(ExcelContext context) {
-        return 0;
     }
 
     private void createSheets(ExcelContext context) {
