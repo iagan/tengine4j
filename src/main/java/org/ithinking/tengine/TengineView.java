@@ -24,12 +24,18 @@ public class TengineView implements View {
     protected String charset = null;
     protected String viewName = null;
     protected Locale locale;
+    protected String excelViewName;
 
     public TengineView(Template template, TemplateEngine engine, Locale locale, String viewName) {
         this.engine = engine;
         this.template = template;
         this.locale = locale;
         this.viewName = viewName;
+        // eg: 123.xls
+        int i = this.viewName.lastIndexOf(".xls");
+        if (i != -1 && i != this.viewName.length() - 4) {
+            this.excelViewName = this.viewName.substring(0, i + 4);
+        }
     }
 
     @Override
@@ -62,17 +68,23 @@ public class TengineView implements View {
     }
 
     public void renderExcel(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
-
-        String fileName = new String(("导出excel标题").getBytes("gb2312"), "iso8859-1") + ".xls";
-        response.setContentType("application/vnd.ms-excel;charset=UTF-8");
-        response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
-        response.setCharacterEncoding("utf-8");
         //
         ExcelParser excelParser = new ExcelParser();
         WorkbookDef workbookDef = excelParser.parse(this.template.getResource().getText());
         ExcelContext context = new ExcelContext(engine, request, response, charset);
         context.putAll(model);
         context.setOs(response.getOutputStream());
+
+        // 设置输出
+        String fileName = workbookDef.getName(context, excelViewName);
+        if (XString.isBlank(fileName)) {
+            fileName = XString.isBlank(excelViewName) ? System.currentTimeMillis() + ".xls" : fileName;
+        }
+        fileName = new String((fileName).getBytes("gb2312"), "iso8859-1") + ".xls";
+        response.setContentType("application/vnd.ms-excel;charset=UTF-8");
+        response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+        response.setCharacterEncoding("utf-8");
+        //
         workbookDef.create(context);
     }
 }
