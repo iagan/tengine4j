@@ -1,6 +1,8 @@
 package org.ithinking.tengine.excel;
 
 import jxl.write.Label;
+import jxl.write.WritableCellFormat;
+import jxl.write.WritableFont;
 
 /**
  * CellDef
@@ -12,6 +14,8 @@ public class CellDef extends NodeDef {
     // 数据类型
     private String type;
 
+    private Integer width;
+
     @Override
     protected int getOffset(ExcelContext context) {
         return context.getCurrentCol() + this.getIndex();
@@ -21,6 +25,9 @@ public class CellDef extends NodeDef {
     protected void createOne(ExcelContext context, Object dataOne, int offset) {
         try {
             Label label = createCell(context);
+            if (this.getWidth() != null) {
+                context.getCurrentSheet().setColumnView(offset, this.getWidth());
+            }
             context.getCurrentSheet().addCell(label);
         } catch (Exception e) {
             e.printStackTrace();
@@ -31,18 +38,23 @@ public class CellDef extends NodeDef {
 
     public Label createCell(ExcelContext context) throws Exception {
         Object val = this.getTextValue(context);
-        Label label = new Label(context.getCurrentCol(), context.getCurrentRow(), val.toString());
+
+        WritableFont font = null;
+        WritableCellFormat format = null;
+
+        if (this.getStyle() != null) {
+            font = this.getStyle().getFont();
+            format = this.getStyle().getFormat();
+        }
+
+        Label label;
+        if (format != null) {
+            label = new Label(context.getCurrentCol(), context.getCurrentRow(), val.toString(), format);
+        } else {
+            label = new Label(context.getCurrentCol(), context.getCurrentRow(), val.toString());
+        }
         return label;
     }
-
-    private void applyStyle(ExcelContext context) {
-        try {
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
 
     public String getType() {
         return type;
@@ -52,4 +64,11 @@ public class CellDef extends NodeDef {
         this.type = type;
     }
 
+    public Integer getWidth() {
+        return width;
+    }
+
+    public void setWidth(Integer width) {
+        this.width = width;
+    }
 }

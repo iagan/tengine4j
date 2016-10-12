@@ -135,8 +135,6 @@ public class ExcelParser {
                 nodeDef.setForeach(XString.toHumpName(param), val);
             } else if ("index".equalsIgnoreCase(name)) {
                 nodeDef.setIndex(Integer.parseInt(val));
-            } else if ("width".equals(name)) {
-
             } else if ("style".equalsIgnoreCase(name)) {
                 Style style = parseStyle(val);
                 if (style != null) {
@@ -189,6 +187,7 @@ public class ExcelParser {
         CellDef cellDef = new CellDef();
         String type = readString(cellElm, "type");
         cellDef.setType(type);
+        cellDef.setWidth(readInt(cellElm, "width"));
         //
         readNodeDef(cellDef, cellElm);
         //
@@ -258,6 +257,10 @@ public class ExcelParser {
                 style.setColor(val);
             } else if ("font-style".equalsIgnoreCase(name)) {
                 style.setFontStyle(val);
+            } else if ("width".equals(name)) {
+                style.setWidth(val.isEmpty() ? null : Integer.parseInt(val));
+            } else if ("height".equals(name)) {
+                style.setHeight(val.isEmpty() ? null : Integer.parseInt(val));
             }
         }
         return style;

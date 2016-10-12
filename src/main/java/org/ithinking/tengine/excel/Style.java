@@ -30,6 +30,10 @@ public class Style {
     private String background;
     // Border
 
+    // 高度(行高)
+    private Integer height;
+    // 宽度(列宽)
+    private Integer width;
 
     // 字体
     private WritableFont font;
@@ -86,7 +90,21 @@ public class Style {
         this.underline = underline;
     }
 
+    public Integer getHeight() {
+        return height;
+    }
 
+    public void setHeight(Integer height) {
+        this.height = height;
+    }
+
+    public Integer getWidth() {
+        return width;
+    }
+
+    public void setWidth(Integer width) {
+        this.width = width;
+    }
 
     public WritableFont getFont() {
         return font;
