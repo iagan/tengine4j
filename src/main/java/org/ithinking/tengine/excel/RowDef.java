@@ -13,8 +13,6 @@ public class RowDef extends NodeDef {
     // 行高
     private Integer height;
 
-    private Integer index;
-
     private List<CellDef> cellDefs;
 
 
@@ -25,8 +23,14 @@ public class RowDef extends NodeDef {
         cellDefs.add(cellDef);
     }
 
+    /**
+     * 没开始一个行，都要设置行号偏移
+     *
+     * @param context
+     */
     @Override
     protected void startDef(ExcelContext context) {
+        context.setCurrentRow(context.getCurrentRow() + getIndex());
         context.setCurrentCol(0);
     }
 
@@ -38,9 +42,6 @@ public class RowDef extends NodeDef {
 
     @Override
     protected void createOne(ExcelContext context, Object dataOne) {
-
-        //context.setCurrentRow(context.getCurrentRow() + index);
-
         applyStyle(context);
         // 每行都要重置列下标，从0开始计数
         context.setCurrentCol(0);
@@ -50,6 +51,7 @@ public class RowDef extends NodeDef {
                 context.incrementCol();
             }
         }
+        context.incrementRow();
     }
 
 
@@ -70,14 +72,6 @@ public class RowDef extends NodeDef {
 
     public void setHeight(Integer height) {
         this.height = height;
-    }
-
-    public Integer getIndex() {
-        return index;
-    }
-
-    public void setIndex(Integer index) {
-        this.index = index;
     }
 
     public List<CellDef> getCellDefs() {

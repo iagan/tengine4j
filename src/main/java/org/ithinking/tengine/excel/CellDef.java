@@ -2,7 +2,6 @@ package org.ithinking.tengine.excel;
 
 import jxl.write.Label;
 import jxl.write.WritableCellFormat;
-import jxl.write.WritableFont;
 
 /**
  * CellDef
@@ -25,7 +24,7 @@ public class CellDef extends NodeDef {
 
     @Override
     protected void startDef(ExcelContext context) {
-
+        context.setCurrentCol(context.getCurrentCol() + getIndex());
     }
 
     @Override

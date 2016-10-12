@@ -29,6 +29,11 @@ public class SheetDef extends NodeDef {
         rowDefs.add(rowDef);
     }
 
+    /**
+     * 每一个Sheet,行号和列号都要重置
+     *
+     * @param context
+     */
     @Override
     protected void startDef(ExcelContext context) {
         context.setCurrentRow(0);
@@ -48,11 +53,9 @@ public class SheetDef extends NodeDef {
         // 每个sheet都要重置行下标,从0开始计数
         if (rowDefs != null && !rowDefs.isEmpty()) {
             for (RowDef rowDef : rowDefs) {
-                context.setCurrentRow(context.getAndIncrementRow());
                 rowDef.create(context);
             }
         }
-        context.setCurrentRow(0);
     }
 
     public Integer getRowHeight() {
