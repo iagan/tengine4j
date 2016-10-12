@@ -73,7 +73,13 @@ public class TengineView implements View {
         WorkbookDef workbookDef = excelParser.parse(this.template.getResource().getText());
         ExcelContext context = new ExcelContext(engine, request, response, charset);
         context.putAll(model);
-        context.setOs(response.getOutputStream());
+
+        try {
+            response.reset();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
 
         // 设置输出
         String fileName = workbookDef.getName(context, excelViewName);
@@ -84,6 +90,8 @@ public class TengineView implements View {
         response.setContentType("application/vnd.ms-excel;charset=UTF-8");
         response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
         response.setCharacterEncoding("utf-8");
+        //
+        context.setOs(response.getOutputStream());
         //
         workbookDef.create(context);
     }
