@@ -31,6 +31,8 @@ public abstract class NodeDef {
     private String forVarName;
 
 
+    protected abstract int getOffset(ExcelContext context);
+
     protected abstract void createOne(ExcelContext context, Object dataOne, int offset);
 
 
@@ -99,10 +101,11 @@ public abstract class NodeDef {
         String varName = forVarName;
         Object dataOne;
         if (source != null) {
+            int offset = this.getOffset(context);
             if (source instanceof List) {
                 // 列表
                 List list = (List) source;
-                for (int i = 0, offset = 0; i < list.size(); i++) {
+                for (int i = 0; i < list.size(); i++) {
                     dataOne = list.get(i);
                     context.add(varName, dataOne);
                     if (isContinue(context)) {
@@ -114,7 +117,7 @@ public abstract class NodeDef {
             } else if (source.getClass().isArray()) {
                 // 数组
                 Object[] array = (Object[]) source;
-                for (int i = 0, offset = 0; i < array.length; i++) {
+                for (int i = 0; i < array.length; i++) {
                     dataOne = array[i];
                     context.add(varName, dataOne);
                     if (isContinue(context)) {

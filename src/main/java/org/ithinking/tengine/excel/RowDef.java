@@ -26,6 +26,11 @@ public class RowDef extends NodeDef {
     }
 
     @Override
+    protected int getOffset(ExcelContext context) {
+        return context.getCurrentRow() + this.getIndex();
+    }
+
+    @Override
     protected void createOne(ExcelContext context, Object dataOne, int offset) {
         applyStyle(context);
         // 每行都要重置列下标，从0开始计数
@@ -72,5 +77,9 @@ public class RowDef extends NodeDef {
 
     public void setCellDefs(List<CellDef> cellDefs) {
         this.cellDefs = cellDefs;
+    }
+
+    public int getDefCellCount() {
+        return this.cellDefs == null ? 0 : cellDefs.size();
     }
 }

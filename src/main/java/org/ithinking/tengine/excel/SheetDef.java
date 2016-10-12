@@ -29,19 +29,23 @@ public class SheetDef extends NodeDef {
         rowDefs.add(rowDef);
     }
 
+    @Override
+    protected int getOffset(ExcelContext context) {
+        return this.getIndex();
+    }
 
     @Override
     public void createOne(ExcelContext context, Object dataOne, int offset) {
         WritableSheet currentSheet = ExcelHelper.createSheet(context.getWorkbook(), this, offset);
         context.setCurrentSheet(currentSheet);
         // 每个sheet都要重置行下标,从0开始计数
-        int row = 0;
         if (rowDefs != null && !rowDefs.isEmpty()) {
             for (RowDef rowDef : rowDefs) {
-                context.setCurrentRow(row++);
+                context.setCurrentRow(context.getAndIncrementRow());
                 rowDef.create(context);
             }
         }
+        context.setCurrentRow(0);
     }
 
     public Integer getRowHeight() {
@@ -74,6 +78,10 @@ public class SheetDef extends NodeDef {
 
     public void setRowDefs(List<RowDef> rowDefs) {
         this.rowDefs = rowDefs;
+    }
+
+    public int getDefRowCount() {
+        return this.rowDefs == null ? 0 : this.rowDefs.size();
     }
 
 }

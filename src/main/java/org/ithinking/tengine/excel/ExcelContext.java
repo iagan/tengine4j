@@ -35,8 +35,8 @@ public class ExcelContext extends HttpServletRequestContext {
 
     private WritableSheet currentSheet;
 
-    private Integer currentRow;
-    private Integer currentCol;
+    private int currentRow = 0;
+    private int currentCol = 0;
 
     public OutputStream getOs() {
         return os;
@@ -66,7 +66,7 @@ public class ExcelContext extends HttpServletRequestContext {
         return currentRow;
     }
 
-    public void setCurrentRow(Integer currentRow) {
+    public void setCurrentRow(int currentRow) {
         this.currentRow = currentRow;
     }
 
@@ -74,7 +74,23 @@ public class ExcelContext extends HttpServletRequestContext {
         return currentCol;
     }
 
-    public void setCurrentCol(Integer currentCol) {
+    public void setCurrentCol(int currentCol) {
         this.currentCol = currentCol;
+    }
+
+    public void incrementRow() {
+        currentRow++;
+    }
+
+    public int getAndIncrementRow() {
+        return currentRow++;
+    }
+
+    public void incrementCol() {
+        currentCol++;
+    }
+
+    public int getAndIncrementCol() {
+        return currentCol++;
     }
 }

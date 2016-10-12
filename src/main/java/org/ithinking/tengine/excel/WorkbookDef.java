@@ -48,6 +48,11 @@ public class WorkbookDef extends NodeDef {
 
     }
 
+    @Override
+    protected int getOffset(ExcelContext context) {
+        return 0;
+    }
+
     private void createSheets(ExcelContext context) {
         if (sheetDefs != null && !sheetDefs.isEmpty()) {
             for (SheetDef sheetDef : sheetDefs) {
@@ -89,5 +94,9 @@ public class WorkbookDef extends NodeDef {
 
     public void setSheetDefs(List<SheetDef> sheetDefs) {
         this.sheetDefs = sheetDefs;
+    }
+
+    public int getDefSheetCount() {
+        return this.sheetDefs == null ? 0 : this.sheetDefs.size();
     }
 }

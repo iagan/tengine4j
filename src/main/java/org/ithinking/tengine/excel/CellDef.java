@@ -13,6 +13,11 @@ public class CellDef extends NodeDef {
     private String type;
 
     @Override
+    protected int getOffset(ExcelContext context) {
+        return context.getCurrentCol() + this.getIndex();
+    }
+
+    @Override
     protected void createOne(ExcelContext context, Object dataOne, int offset) {
         try {
             Label label = createCell(context);
