@@ -30,7 +30,12 @@ public class RowDef extends NodeDef {
      */
     @Override
     protected void startDef(ExcelContext context) {
-        context.setCurrentRow(context.getCurrentRow() + getOffset());
+        if (this.getIndex() != null) {
+            context.setCurrentRow(getIndex());
+        } else {
+            context.setCurrentRow(context.getCurrentRow() + getOffset());
+        }
+
         context.setCurrentCol(0);
     }
 
@@ -41,7 +46,7 @@ public class RowDef extends NodeDef {
 
 
     @Override
-    protected void createOne(ExcelContext context, Object dataOne) {
+    protected void createOne(ExcelContext context, Object dataOne, int index) {
         applyStyle(context);
         // 每行都要重置列下标，从0开始计数
         context.setCurrentCol(0);

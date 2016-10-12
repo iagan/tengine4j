@@ -35,7 +35,7 @@ public abstract class NodeDef {
 
     protected abstract void startDef(ExcelContext context);
 
-    protected abstract void createOne(ExcelContext context, Object dataOne);
+    protected abstract void createOne(ExcelContext context, Object dataOne, int index);
 
     protected abstract void endDef(ExcelContext context);
 
@@ -109,21 +109,21 @@ public abstract class NodeDef {
             if (source instanceof List) {
                 // 列表
                 List list = (List) source;
-                for (int i = 0; i < list.size(); i++) {
+                for (int i = 0, idx = 0; i < list.size(); i++) {
                     dataOne = list.get(i);
                     context.add(varName, dataOne);
                     if (isContinue(context)) {
-                        this.createOne(context, dataOne);
+                        this.createOne(context, dataOne, idx++);
                     }
                 }
             } else if (source.getClass().isArray()) {
                 // 数组
                 Object[] array = (Object[]) source;
-                for (int i = 0; i < array.length; i++) {
+                for (int i = 0, idx = 0; i < array.length; i++) {
                     dataOne = array[i];
                     context.add(varName, dataOne);
                     if (isContinue(context)) {
-                        this.createOne(context, dataOne);
+                        this.createOne(context, dataOne, idx++);
                     }
                 }
             } else {
@@ -145,7 +145,7 @@ public abstract class NodeDef {
                 foreach(context);
             } else {
                 this.startDef(context);
-                createOne(context, null);
+                createOne(context, null, 0);
                 this.endDef(context);
             }
         }

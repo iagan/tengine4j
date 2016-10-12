@@ -54,7 +54,7 @@ public class WorkbookDef extends NodeDef {
     }
 
     @Override
-    protected void createOne(ExcelContext context, Object dataOne) {
+    protected void createOne(ExcelContext context, Object dataOne, int index) {
 
     }
 

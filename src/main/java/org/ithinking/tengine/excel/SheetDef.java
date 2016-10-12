@@ -47,8 +47,8 @@ public class SheetDef extends NodeDef {
     }
 
     @Override
-    public void createOne(ExcelContext context, Object dataOne) {
-        WritableSheet currentSheet = ExcelHelper.createSheet(context.getWorkbook(), this, this.getIndex());
+    public void createOne(ExcelContext context, Object dataOne, int index) {
+        WritableSheet currentSheet = ExcelHelper.createSheet(context.getWorkbook(), this, index);
         context.setCurrentSheet(currentSheet);
         // 每个sheet都要重置行下标,从0开始计数
         if (rowDefs != null && !rowDefs.isEmpty()) {

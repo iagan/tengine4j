@@ -24,7 +24,11 @@ public class CellDef extends NodeDef {
 
     @Override
     protected void startDef(ExcelContext context) {
-        context.setCurrentCol(context.getCurrentCol() + getOffset());
+        if (this.getIndex() != null) {
+            context.setCurrentCol(this.getIndex());
+        } else {
+            context.setCurrentCol(context.getCurrentCol() + getOffset());
+        }
     }
 
     @Override
@@ -33,7 +37,7 @@ public class CellDef extends NodeDef {
     }
 
     @Override
-    protected void createOne(ExcelContext context, Object dataOne) {
+    protected void createOne(ExcelContext context, Object dataOne, int index) {
         try {
             int col1 = context.getCurrentCol();
             int row1 = context.getCurrentRow();
