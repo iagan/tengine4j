@@ -1,26 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<Workbook name="李明任务表">
+<Workbook name="${owner}的用户务表-${date}.xls">
     <Sheet name="任务列表" row-height="255" col-width="8" style="">
-        <row index="0">
-            <cell type="date" height="11" width="20">2016-09-01</cell>
-        </row>
-
-        <row height="500">
-            <cell type="date"  width="20" index="2" style="">另一行</cell>
-            <cell type="date"  width="20">什么</cell>
-        </row>
-
-        <row index="4">
-            <cell type="date"  width="20" index="5">再另一行</cell>
-            <cell type="date"  width="20">什么</cell>
-        </row>
-
-        <row index="9"  for1="taskList" rowspan="1" style="height:1200;">
-            <cell colspan="1">小王</cell>
-            <cell>2017-89-53</cell>
-            <cell>2017-89-54</cell>
-            <cell>2017-89-55</cell>
-            <cell>2017-89-56</cell>
+        <row for-user="userList">
+            <cell>${user.name}</cell>
+            <cell>${user.age}</cell>
         </row>
     </Sheet>
 </Workbook>

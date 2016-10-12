@@ -149,6 +149,7 @@ public class ExcelParser {
     private WorkbookDef createWorkbookDef(Element workbook) {
         WorkbookDef workbookDef = new WorkbookDef();
         //
+        workbookDef.setName(readString(workbook, "name"));
         readNodeDef(workbookDef, workbook);
         //
         return workbookDef;
@@ -217,7 +218,7 @@ public class ExcelParser {
             if (node.getNodeType() == Node.ELEMENT_NODE) {
                 return null;
             }
-            if(node.getNodeType() == Node.TEXT_NODE){
+            if (node.getNodeType() == Node.TEXT_NODE) {
                 sb.append(node.getNodeValue());
             }
 

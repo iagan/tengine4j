@@ -106,7 +106,9 @@ public abstract class NodeDef {
                     dataOne = list.get(i);
                     context.add(varName, dataOne);
                     if (isContinue(context)) {
-                        this.createOne(context, dataOne, offset++);
+                        context.setCurrentRow(offset);
+                        this.createOne(context, dataOne, offset);
+                        offset++;
                     }
                 }
             } else if (source.getClass().isArray()) {
@@ -116,7 +118,9 @@ public abstract class NodeDef {
                     dataOne = array[i];
                     context.add(varName, dataOne);
                     if (isContinue(context)) {
-                        this.createOne(context, dataOne, offset++);
+                        context.setCurrentRow(offset);
+                        this.createOne(context, dataOne, offset);
+                        offset++;
                     }
                 }
             }

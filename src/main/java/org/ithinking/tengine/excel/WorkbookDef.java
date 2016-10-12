@@ -2,6 +2,8 @@ package org.ithinking.tengine.excel;
 
 import jxl.Workbook;
 import jxl.write.WritableWorkbook;
+import org.ithinking.tengine.expr.Expression;
+import org.ithinking.tengine.expr.ExpressionFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +15,8 @@ import java.util.List;
  * @date 2016-10-02
  */
 public class WorkbookDef extends NodeDef {
+
+    private Expression name;
 
     private List<SheetDef> sheetDefs;
 
@@ -59,6 +63,22 @@ public class WorkbookDef extends NodeDef {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    public String getName(ExcelContext context, String def) {
+        if (name == null) {
+            return def;
+        }
+        Object val = name.execute(context);
+        return val == null ? def : val.toString();
+    }
+
+    public void setName(String name) {
+        if (name == null) {
+            this.name = null;
+        } else {
+            this.name = ExpressionFactory.createCompositeExpression(name);
         }
     }
 
