@@ -89,7 +89,7 @@ public class TengineView implements View {
         if (!fileName.endsWith(".xls")) {
             fileName += ".xls";
         }
-        fileName = new String((fileName).getBytes("gb2312"), "iso8859-1") + ".xls";
+        fileName = new String((fileName).getBytes("gb2312"), "iso8859-1");
         response.setContentType("application/vnd.ms-excel;charset=UTF-8");
         response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
         response.setCharacterEncoding("utf-8");
