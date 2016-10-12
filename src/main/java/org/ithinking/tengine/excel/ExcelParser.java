@@ -54,9 +54,6 @@ public class ExcelParser {
                 }
 
                 SheetDef sheetDef = this.createSheetDef(sheetElm);
-                if (sheetDef.getIndex() == null) {
-                    sheetDef.setIndex(workbookDef.getDefSheetCount());
-                }
                 workbookDef.add(sheetDef);
 
                 /**
@@ -74,9 +71,6 @@ public class ExcelParser {
                     }
 
                     RowDef rowDef = this.createRowDef(rowElm);
-                    if (rowDef.getIndex() == null) {
-                        rowDef.setIndex(sheetDef.getDefRowCount());
-                    }
                     sheetDef.add(rowDef);
 
 
@@ -95,9 +89,6 @@ public class ExcelParser {
                         }
 
                         CellDef cellDef = createCellDef(cellElm);
-                        if (cellDef.getIndex() == null) {
-                            cellDef.setIndex(rowDef.getDefCellCount());
-                        }
                         rowDef.add(cellDef);
                     }
                 }
@@ -135,6 +126,8 @@ public class ExcelParser {
                 nodeDef.setForeach(XString.toHumpName(param), val);
             } else if ("index".equalsIgnoreCase(name)) {
                 nodeDef.setIndex(Integer.parseInt(val));
+            } else if ("offset".equalsIgnoreCase(name)) {
+                nodeDef.setOffset(Integer.parseInt(val));
             } else if ("style".equalsIgnoreCase(name)) {
                 Style style = parseStyle(val);
                 if (style != null) {
@@ -143,6 +136,12 @@ public class ExcelParser {
                 }
             }
 
+        }
+
+
+        // 如果没有设置偏移，则默认为0
+        if (nodeDef.getOffset() == null || nodeDef.getOffset() < 0) {
+            nodeDef.setOffset(0);
         }
 
 

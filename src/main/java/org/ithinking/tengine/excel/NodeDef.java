@@ -18,6 +18,8 @@ public abstract class NodeDef {
 
     private Integer index;
 
+    private Integer offset;
+
     private Expression forExpr;
 
     private Expression ifExpr;
@@ -200,5 +202,13 @@ public abstract class NodeDef {
 
     public void setIndex(Integer index) {
         this.index = index;
+    }
+
+    public Integer getOffset() {
+        return offset;
+    }
+
+    public void setOffset(Integer offset) {
+        this.offset = offset;
     }
 }

@@ -30,7 +30,7 @@ public class RowDef extends NodeDef {
      */
     @Override
     protected void startDef(ExcelContext context) {
-        context.setCurrentRow(context.getCurrentRow() + getIndex());
+        context.setCurrentRow(context.getCurrentRow() + getOffset());
         context.setCurrentCol(0);
     }
 
@@ -48,7 +48,6 @@ public class RowDef extends NodeDef {
         if (cellDefs != null && !cellDefs.isEmpty()) {
             for (CellDef cellDef : cellDefs) {
                 cellDef.create(context);
-                context.incrementCol();
             }
         }
         context.incrementRow();

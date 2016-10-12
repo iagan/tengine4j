@@ -24,7 +24,7 @@ public class CellDef extends NodeDef {
 
     @Override
     protected void startDef(ExcelContext context) {
-        context.setCurrentCol(context.getCurrentCol() + getIndex());
+        context.setCurrentCol(context.getCurrentCol() + getOffset());
     }
 
     @Override
@@ -42,6 +42,8 @@ public class CellDef extends NodeDef {
                 context.getCurrentSheet().setColumnView(col1, this.getWidth());
             }
             context.getCurrentSheet().addCell(label);
+            // 指向下一行
+            context.incrementCol();
 
 
             // 合并单元格
