@@ -86,6 +86,9 @@ public class TengineView implements View {
         if (XString.isBlank(fileName)) {
             fileName = XString.isBlank(excelViewName) ? System.currentTimeMillis() + ".xls" : fileName;
         }
+        if (!fileName.endsWith(".xls")) {
+            fileName += ".xls";
+        }
         fileName = new String((fileName).getBytes("gb2312"), "iso8859-1") + ".xls";
         response.setContentType("application/vnd.ms-excel;charset=UTF-8");
         response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
