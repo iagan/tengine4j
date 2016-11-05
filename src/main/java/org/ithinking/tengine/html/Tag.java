@@ -1,6 +1,7 @@
 package org.ithinking.tengine.html;
 
 import org.ithinking.tengine.Indicator;
+import org.ithinking.tengine.XString;
 import org.ithinking.tengine.core.*;
 import org.ithinking.tengine.expr.Expression;
 import org.ithinking.tengine.expr.ExpressionFactory;
@@ -68,13 +69,42 @@ public class Tag extends AbstractRender {
         return fragid;
     }
 
+
+    private boolean isTrue(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj instanceof Boolean) {
+            return ((Boolean) obj).booleanValue();
+        }
+        if (obj instanceof String) {
+            return XString.isNotBlank((String) obj);
+        }
+        if (obj instanceof Collection) {
+            return !((Collection) obj).isEmpty();
+        }
+        if (obj instanceof Map) {
+            return !((Map) obj).isEmpty();
+        }
+        if (obj.getClass().isArray()) {
+            return ((Object[]) obj).length > 0;
+        }
+
+        return true;
+    }
+
+    public boolean isNotTrue(Object obj) {
+        return !isTrue(obj);
+    }
+
     private boolean isSkip(Context context) {
         boolean skip = false;
         if (ignore) {
             skip = true;
         } else if (this.ifExpression != null) {
-            boolean val = ifExpression.executeForBoolean(context);
-            skip = !val;
+            Object val = ifExpression.execute(context);
+            // 不为真，则跳过
+            skip = isNotTrue(val);
         }
         return skip;
     }
