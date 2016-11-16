@@ -79,6 +79,21 @@
         </dependency>
 
     </dependencies>
+	
+	  <!-- 发布配置 -->
+    <distributionManagement>
+        <snapshotRepository>
+            <id>nexus</id>
+            <name>Nexus Snapshot</name>
+            <url>http://long.server:9090/repository/maven-snapshots/</url>
+        </snapshotRepository>
+        <repository>
+            <id>nexus</id>
+            <name>Nexus Snapshot</name>
+            <url>http://long.server:9090/repository/maven-releases/</url>
+        </repository>
+    </distributionManagement>
+	
     <build>
         <plugins>
             <!-- 编译 -->
