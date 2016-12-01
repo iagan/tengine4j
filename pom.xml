@@ -85,12 +85,12 @@
         <snapshotRepository>
             <id>nexus</id>
             <name>Nexus Snapshot</name>
-            <url>http://long.server:9090/repository/maven-snapshots/</url>
+            <url>http://nexus.server/repository/maven-snapshots/</url>
         </snapshotRepository>
         <repository>
             <id>nexus</id>
             <name>Nexus Snapshot</name>
-            <url>http://long.server:9090/repository/maven-releases/</url>
+            <url>http://nexus.server/repository/maven-releases/</url>
         </repository>
     </distributionManagement>
 	
