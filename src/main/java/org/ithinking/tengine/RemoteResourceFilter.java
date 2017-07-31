@@ -10,6 +10,11 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 远程静态资源拦截器
@@ -33,6 +38,50 @@ public class RemoteResourceFilter implements Filter {
     private boolean isDynamicRemoteHost;
     private String before;
     private String after;
+
+    private static final Map<String, String> MIME_MAPPING;
+
+    static {
+        MIME_MAPPING = new HashMap<>();
+        MIME_MAPPING.put(".css", "text/css");
+        MIME_MAPPING.put(".js", "application/javascript");
+        MIME_MAPPING.put(".html", "text/html");
+
+        //
+        MIME_MAPPING.put(".doc", "application/vnd.ms-word");
+        MIME_MAPPING.put(".xml", "application/xml");
+
+        // 图片
+        MIME_MAPPING.put(".bmp", "image/x-ms-bmp");
+        MIME_MAPPING.put(".jpg", "image/jpeg");
+        MIME_MAPPING.put(".jpeg", "image/jpeg");
+        MIME_MAPPING.put(".gif", "image/gif");
+        MIME_MAPPING.put(".png", "image/png");
+        MIME_MAPPING.put(".tif", "image/tiff");
+        MIME_MAPPING.put(".tiff", "image/tiff");
+        MIME_MAPPING.put(".tga", "image/x-targa");
+        MIME_MAPPING.put(".psd", "image/vnd.adobe.photoshop");
+
+        // 音频文件类型的
+        MIME_MAPPING.put(".mp3", "audio/mpeg");
+        MIME_MAPPING.put(".mid", "audio/midi");
+        MIME_MAPPING.put(".ogg", "audio/ogg");
+        MIME_MAPPING.put(".mp3", "audio/mpeg");
+        MIME_MAPPING.put(".mp4a", "audio/mp4");
+        MIME_MAPPING.put(".wav", "audio/wav");
+        MIME_MAPPING.put(".wma", "audio/x-ms-wma");
+
+        // 视频文件类型的
+        MIME_MAPPING.put(".avi", "video/x-msvideo");
+        MIME_MAPPING.put(".dv", "video/x-dv");
+        MIME_MAPPING.put(".mp4", "video/mp4");
+        MIME_MAPPING.put(".mpeg", "video/mpeg");
+        MIME_MAPPING.put(".mpg", "video/mpeg");
+        MIME_MAPPING.put(".mov", "video/quicktime");
+        MIME_MAPPING.put(".wm", "video/x-ms-wmv");
+        MIME_MAPPING.put(".flv", "video/x-flv");
+        MIME_MAPPING.put(".mkv", "video/x-matroska");
+    }
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -79,6 +128,7 @@ public class RemoteResourceFilter implements Filter {
             // 动态资源
             chain.doFilter(request, response);
         } else if (isRemote) {
+            response.setContentType(getContentType(uri));
             String remoteBase = docBasePath;
             if (isDynamicRemoteHost) {
                 String ip = WEB.getRemoteIP(req);
@@ -95,7 +145,7 @@ public class RemoteResourceFilter implements Filter {
             }
         } else if (isLocal) {
             // 绝对路径本地加载
-           // String base = getMultiVersionDocBasePath(docBasePath, (HttpServletRequest) request);
+            // String base = getMultiVersionDocBasePath(docBasePath, (HttpServletRequest) request);
             String path = XString.makePath(docBasePath, uri);
             readTo(path, (HttpServletResponse) response);
         } else {
@@ -123,6 +173,7 @@ public class RemoteResourceFilter implements Filter {
         OutputStream out = null;
         FileInputStream fis = null;
         try {
+            response.setContentType(getContentType(path));
             if (!file.exists() || !file.isFile()) {
                 response.sendError(404, "资源未找到");
             } else {
@@ -140,6 +191,20 @@ public class RemoteResourceFilter implements Filter {
         } finally {
             close(fis, out);
         }
+    }
+
+    public static String getContentType(String filename) {
+        int index = filename == null ? -1 : filename.lastIndexOf(".");
+        try {
+            if (index != -1) {
+                String type = filename.substring(index);
+                String val = MIME_MAPPING.get(type.toLowerCase());
+                return val == null ? "" : val;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
     private void close(InputStream is, OutputStream os) {
@@ -161,5 +226,10 @@ public class RemoteResourceFilter implements Filter {
     @Override
     public void destroy() {
 
+    }
+
+
+    public static void main(String[] args) {
+        System.out.println(getContentType("/usr/index.css"));
     }
 }

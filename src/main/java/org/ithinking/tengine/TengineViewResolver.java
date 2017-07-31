@@ -69,6 +69,7 @@ public class TengineViewResolver extends WebApplicationObjectSupport implements 
      */
     @Override
     public View resolveViewName(String viewName, Locale locale) throws Exception {
+        logger.info("resolveViewName: viewName={}, locale={}", viewName, locale);
         if (!viewName.endsWith(suffix) && !"/error".equals(viewName) && !viewName.endsWith(".xls.xml")) {
             //vrlogger.trace("[TENGINE4J] View \"{}\" cannot be handled by ThymeleafViewResolver. Passing on to the next resolver in the chain.", viewName);
             return null;

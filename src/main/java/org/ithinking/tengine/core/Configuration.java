@@ -14,7 +14,7 @@ public class Configuration {
     private static final Logger logger = LoggerFactory.getLogger(Configuration.class);
     public static final String PERM_KEY = "$_PERM_SET_$";
     // 默认配置
-    private static final Configuration DEFAULT;
+    private static Configuration DEFAULT;
     private static Configuration WEB;
     // 文档基目录
     private String docBase;
@@ -38,36 +38,6 @@ public class Configuration {
     // 图片基路径
     private String imageBase;
 
-    static {
-        DEFAULT = new Configuration();
-        try {
-            if (!loadDefConfig(Thread.currentThread().getContextClassLoader())) {
-                if (!loadDefConfig(Configuration.class.getClassLoader())) {
-                    ClassLoader classLoader = Configuration.class.getClassLoader();
-                    Enumeration<URL> urls = classLoader.getResources("");
-                    logger.info("\n\n[LOAD CONFIG] - {}\n\n", urls);
-                    loadProperties(urls);
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            logger.info("\n\n[DEFAULT CONFIG] tg.img.base={}, tg.view.prefix={}, tg.view.suffix={},tg.doc.base={}\n\n",
-                    DEFAULT.getImageBase(),
-                    DEFAULT.getViewPrefix(),
-                    DEFAULT.getViewSuffix(),
-                    DEFAULT.getDocBase()
-            );
-            DEFAULT.isDefault = true;
-        }
-        WEB = newConfiguration();
-        logger.info("\n\n[WEB CONFIG] tg.img.base={}, tg.view.prefix={}, tg.view.suffix={},tg.doc.base={}\n\n",
-                WEB.getImageBase(),
-                WEB.getViewPrefix(),
-                WEB.getViewSuffix(),
-                WEB.getDocBase()
-        );
-    }
 
     private Configuration() {
         this.isDefault = false;
@@ -119,6 +89,48 @@ public class Configuration {
                     }
                 }
             }
+        }
+    }
+
+    private static void initDefault() {
+        try {
+            if (DEFAULT == null) {
+                synchronized (Configuration.class) {
+                    if (DEFAULT == null) {
+                        DEFAULT = new Configuration();
+                        DEFAULT.isDefault = true;
+                        //
+                        String imageBase = System.getProperty("tg.img.base");
+                        String prefix = System.getProperty("tg.view.prefix");
+                        String suffix = System.getProperty("tg.view.suffix");
+                        String docBase = System.getProperty("tg.doc.base");
+                        String charset = System.getProperty("tg.view.charset");
+                        String enablePerm = System.getProperty("tg.enable.perm");
+                        String multiVersion = System.getProperty("tg.multi.version");
+                        logger.info("\n\n[TG.INIT] tg.img.base={}, tg.view.prefix={}, tg.view.suffix={}, tg.doc.base={}, tg.view.charset={}, tg.enable.perm={},tg.multi.version={}\n\n", imageBase, prefix, suffix, docBase, charset, enablePerm, multiVersion);
+
+                        DEFAULT.imageBase = imageBase;
+                        DEFAULT.viewPrefix = prefix;
+                        DEFAULT.viewSuffix = suffix;
+                        DEFAULT.docBase = docBase;
+                        DEFAULT.viewCharset = charset;
+                        DEFAULT.enablePerm = Boolean.valueOf(XString.defVal(enablePerm, "false"));
+                        DEFAULT.multiVersion = Boolean.valueOf(XString.defVal(multiVersion, "false"));
+
+                        //
+                        if (!loadDefConfig(Thread.currentThread().getContextClassLoader())) {
+                            if (!loadDefConfig(Configuration.class.getClassLoader())) {
+                                ClassLoader classLoader = Configuration.class.getClassLoader();
+                                Enumeration<URL> urls = classLoader.getResources("");
+                                logger.info("\n\n[LOAD CONFIG] - {}\n\n", urls);
+                                loadProperties(urls);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -174,6 +186,11 @@ public class Configuration {
     }
 
     public static Configuration newConfiguration() {
+        if (DEFAULT == null) {
+            synchronized (Configuration.class) {
+                initDefault();
+            }
+        }
         Configuration configuration = new Configuration();
         configuration.copyFromDefault();
         return configuration;
@@ -181,6 +198,14 @@ public class Configuration {
     }
 
     public static Configuration getWebConfiguration() {
+        if (DEFAULT == null) {
+            initDefault();
+        }
+        if (WEB == null) {
+            synchronized (Configuration.class) {
+                WEB = newConfiguration();
+            }
+        }
         return WEB;
     }
 
@@ -195,6 +220,11 @@ public class Configuration {
     }
 
     public static Configuration getDefault() {
+        if (DEFAULT == null) {
+            synchronized (Configuration.class) {
+                initDefault();
+            }
+        }
         return DEFAULT;
     }
 
