@@ -170,7 +170,7 @@ public class RemoteResourceFilter implements Filter {
         OutputStream out = null;
         FileInputStream fis = null;
         try {
-            Path relPath = Paths.get(path).normalize().toRealPath(LinkOption.NOFOLLOW_LINKS);
+            Path relPath = Paths.get(path).normalize().toRealPath();
             File file = relPath.toFile();
             //
             response.setContentType(getContentType(path));
