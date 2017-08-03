@@ -10,9 +10,7 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -167,9 +165,9 @@ public class RemoteResourceFilter implements Filter {
 //        return docBasePath;
 //    }
 
-    private void readTo(String path, HttpServletResponse response) {
-        File file = new File(path);
-
+    private void readTo(String path, HttpServletResponse response) throws IOException {
+        Path filePath = Paths.get(path).toRealPath(LinkOption.NOFOLLOW_LINKS);
+        File file = filePath.toFile();
         OutputStream out = null;
         FileInputStream fis = null;
         try {
@@ -186,8 +184,13 @@ public class RemoteResourceFilter implements Filter {
                 }
                 out.flush();
             }
+        } catch (FileNotFoundException e) {
+            response.sendError(404, "未找到页面");
+        } catch (NoSuchFileException e) {
+            response.sendError(404, "未找到页面");
         } catch (Exception e) {
             e.printStackTrace();
+            response.sendError(500);
         } finally {
             close(fis, out);
         }
