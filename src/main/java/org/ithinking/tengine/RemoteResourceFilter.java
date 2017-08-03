@@ -10,7 +10,7 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.nio.file.*;
+import java.nio.file.NoSuchFileException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,7 +22,7 @@ import java.util.Map;
  */
 public class RemoteResourceFilter implements Filter {
 
-    private static final Logger logger = LoggerFactory.getLogger(RemoteResourceFilter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RemoteResourceFilter.class);
     private static Configuration conf = Configuration.newConfiguration();
     private boolean isRemote = false;
     private boolean isLocal = false;
@@ -86,7 +86,7 @@ public class RemoteResourceFilter implements Filter {
 
         String ctxPath = filterConfig.getServletContext().getRealPath(filterConfig.getServletContext().getContextPath());
         conf = Configuration.getWebConfiguration();
-        logger.info("[Init-1] prefix={},suffix={}, charset={}, ctxPath={}", conf.getViewPrefix(), conf.getViewSuffix(), conf.getViewCharset(), ctxPath);
+        LOGGER.info("[Init-1] prefix={},suffix={}, charset={}, ctxPath={}", conf.getViewPrefix(), conf.getViewSuffix(), conf.getViewCharset(), ctxPath);
         conf.setViewCharset(XString.defVal(conf.getViewCharset(), "UTF-8"));
         conf.setViewPrefix(XString.defVal(conf.getViewPrefix(), "/tpl"));
         conf.setViewSuffix(XString.defVal(conf.getViewSuffix(), ".html"));
@@ -97,7 +97,7 @@ public class RemoteResourceFilter implements Filter {
         prefix = conf.getViewPrefix();
         suffix = conf.getViewSuffix();
         //
-        logger.info("[Init-2] prefix={},suffix={}, charset={}, docBasePath={}, isDynamicRemoteUrl={}",
+        LOGGER.info("[Init-2] prefix={},suffix={}, charset={}, docBasePath={}, isDynamicRemoteUrl={}",
                 conf.getViewPrefix(), suffix, conf.getViewCharset(), docBasePath, isDynamicRemoteHost);
 
         if (conf.isRemoteUrl()) {
@@ -112,6 +112,10 @@ public class RemoteResourceFilter implements Filter {
             }
         } else if (conf.isFilePath()) {
             isLocal = true;
+            // 如何是本地，则获取绝对路径(需要处理软连接)
+            LOGGER.info("docBasePath: {}", docBasePath);
+            docBasePath = getRelPath(docBasePath);
+            LOGGER.info("docBasePath: {}", docBasePath);
         }
     }
 
@@ -133,12 +137,12 @@ public class RemoteResourceFilter implements Filter {
                 remoteBase = before + ip + after;
             }
             String resUrl = XString.makeUrl(remoteBase, uri);
-            logger.info("[FILTER_REMOTE_URL]: Resource url={}", resUrl);
+            LOGGER.info("[FILTER_REMOTE_URL]: Resource url={}", resUrl);
             try {
                 Http.get(resUrl, ((HttpServletRequest) request).getHeader("Host"), response.getOutputStream());
             } catch (Http404Exception e) {
                 // 对于未找到的资源，可以直接穿透使用服务器的资源
-                logger.error("[FILTER_REMOTE_URL]: Not found resource= {}", resUrl);
+                LOGGER.error("[FILTER_REMOTE_URL]: Not found resource= {}", resUrl);
                 chain.doFilter(request, response);
             }
         } else if (isLocal) {
@@ -165,13 +169,23 @@ public class RemoteResourceFilter implements Filter {
 //        return docBasePath;
 //    }
 
+    private static String getRelPath(String path) {
+        try {
+            File file = new File(path);
+            return file.getCanonicalPath();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new IllegalArgumentException("获取文档根目录异常" + path);
+        }
+    }
+
     private void readTo(String path, HttpServletResponse response) throws IOException {
 
         OutputStream out = null;
         FileInputStream fis = null;
         try {
-            Path relPath = Paths.get(path).normalize().toRealPath();
-            File file = relPath.toFile();
+            //Path relPath = new File(path);
+            File file = new File(path); //.toFile();
             //
             response.setContentType(getContentType(path));
             if (!file.exists() || !file.isFile()) {
