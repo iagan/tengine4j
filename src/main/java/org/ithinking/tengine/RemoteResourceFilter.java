@@ -116,6 +116,9 @@ public class RemoteResourceFilter implements Filter {
             LOGGER.info("docBasePath: {}", docBasePath);
             docBasePath = getRelPath(docBasePath);
             LOGGER.info("docBasePath: {}", docBasePath);
+            // 如果是本地，则默认网络请求为Http,80端口
+            before = "http://";
+            after = "";
         }
     }
 
@@ -123,13 +126,17 @@ public class RemoteResourceFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
         String uri = req.getServletPath();
+        String fromHost = ((HttpServletRequest) request).getHeader("Host");
+        String excludeHost = conf.getHost() == null ? "" : conf.getHost();
+        boolean isExclude = !excludeHost.isEmpty() && excludeHost.startsWith(fromHost);
+
         if (uri.endsWith(suffix) || uri.endsWith(".do") || uri.endsWith(".json") || uri.endsWith(".action") || uri.indexOf(".") == -1) {
             if (isDynamicRemoteHost) {
                 RemoteDynamicHostLoader.setRemoteIp(WEB.getRemoteIP(req));
             }
             // 动态资源
             chain.doFilter(request, response);
-        } else if (isRemote) {
+        } else if ((isRemote && !isExclude) || (!isRemote && isExclude)) {
             response.setContentType(getContentType(uri));
             String remoteBase = docBasePath;
             if (isDynamicRemoteHost) {
@@ -145,7 +152,7 @@ public class RemoteResourceFilter implements Filter {
                 LOGGER.error("[FILTER_REMOTE_URL]: Not found resource= {}", resUrl);
                 chain.doFilter(request, response);
             }
-        } else if (isLocal) {
+        } else if ((isLocal && !isExclude) || (!isLocal && isExclude)) {
             // 绝对路径本地加载
             // String base = getMultiVersionDocBasePath(docBasePath, (HttpServletRequest) request);
             String path = XString.makePath(docBasePath, uri);

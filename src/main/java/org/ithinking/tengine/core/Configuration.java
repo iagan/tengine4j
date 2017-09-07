@@ -18,6 +18,8 @@ public class Configuration {
     private static Configuration WEB;
     // 文档基目录
     private String docBase;
+    // 指定Host
+    private String host;
     // 模板编码
     private String viewCharset;
     // tg.view.prefix
@@ -107,7 +109,8 @@ public class Configuration {
                         String charset = System.getProperty("tg.view.charset");
                         String enablePerm = System.getProperty("tg.enable.perm");
                         String multiVersion = System.getProperty("tg.multi.version");
-                        logger.info("\n\n[TG.INIT] tg.img.base={}, tg.view.prefix={}, tg.view.suffix={}, tg.doc.base={}, tg.view.charset={}, tg.enable.perm={},tg.multi.version={}\n\n", imageBase, prefix, suffix, docBase, charset, enablePerm, multiVersion);
+                        String host = System.getProperty("tg.host");
+                        logger.info("\n\n[TG.INIT] tg.img.base={}, tg.view.prefix={}, tg.view.suffix={}, tg.doc.base={}, tg.view.charset={}, tg.enable.perm={},tg.multi.version={}, tg.host\n\n", imageBase, prefix, suffix, docBase, charset, enablePerm, multiVersion, host);
 
                         DEFAULT.imageBase = imageBase;
                         DEFAULT.viewPrefix = prefix;
@@ -116,6 +119,7 @@ public class Configuration {
                         DEFAULT.viewCharset = charset;
                         DEFAULT.enablePerm = Boolean.valueOf(XString.defVal(enablePerm, "false"));
                         DEFAULT.multiVersion = Boolean.valueOf(XString.defVal(multiVersion, "false"));
+                        DEFAULT.host = host == null ? null : host.trim();
 
                         //
                         if (!loadDefConfig(Thread.currentThread().getContextClassLoader())) {
@@ -150,6 +154,7 @@ public class Configuration {
             String charset = properties.getProperty("tg.view.charset");
             String enablePerm = properties.getProperty("tg.enable.perm");
             String multiVersion = properties.getProperty("tg.multi.version");
+            String host = properties.getProperty("tg.host");
             logger.info("\n\n[loadProperties] " +
                             "tg.img.base={}, " +
                             "tg.view.prefix={}, " +
@@ -157,8 +162,9 @@ public class Configuration {
                             "tg.doc.base={}, " +
                             "tg.view.charset={}, " +
                             "tg.enable.perm={}," +
-                            "tg.multi.version={}\n\n",
-                    imageBase, prefix, suffix, docBase, charset, enablePerm, multiVersion);
+                            "tg.multi.version={}," +
+                            "tg.host={}\n\n",
+                    imageBase, prefix, suffix, docBase, charset, enablePerm, multiVersion, host);
             DEFAULT.imageBase = imageBase;
             DEFAULT.viewPrefix = prefix;
             DEFAULT.viewSuffix = suffix;
@@ -166,6 +172,7 @@ public class Configuration {
             DEFAULT.viewCharset = charset;
             DEFAULT.enablePerm = Boolean.valueOf(XString.defVal(enablePerm, "false"));
             DEFAULT.multiVersion = Boolean.valueOf(XString.defVal(multiVersion, "false"));
+            DEFAULT.host = host == null ? null : host.trim();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -217,6 +224,7 @@ public class Configuration {
         this.viewSuffix = DEFAULT.viewSuffix;
         this.enablePerm = DEFAULT.enablePerm;
         this.multiVersion = DEFAULT.multiVersion;
+        this.host = DEFAULT.host;
     }
 
     public static Configuration getDefault() {
@@ -253,6 +261,8 @@ public class Configuration {
                     configuration.setEnablePerm(Boolean.valueOf(XString.defVal(value, "false")));
                 } else if ("tg.multi.version".equals(key)) {
                     configuration.setMultiVersion(Boolean.valueOf(XString.defVal(value, "false")));
+                } else if ("tg.host".equals(key)) {
+                    configuration.setHost(value == null ? null : value.trim());
                 }
             }
         }
@@ -275,6 +285,16 @@ public class Configuration {
     public void setMultiVersion(boolean multiVersion) {
         if (!isDefault) {
             this.multiVersion = multiVersion;
+        }
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        if (!isDefault) {
+            this.host = host;
         }
     }
 
