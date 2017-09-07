@@ -129,26 +129,19 @@ public class RemoteResourceFilter implements Filter {
         String fromHost = ((HttpServletRequest) request).getHeader("Host");
         String excludeHost = conf.getHost() == null ? "" : conf.getHost();
         boolean isExclude = !excludeHost.isEmpty() && excludeHost.startsWith(fromHost);
-        // uri.endsWith(suffix) ||
-        if (uri.endsWith(".do") || uri.endsWith(".json") || uri.endsWith(".action") || uri.indexOf(".") == -1) {
+        // Ajax或页面模板需要解析
+        if (uri.endsWith(suffix) || uri.endsWith(".do") || uri.endsWith(".json") || uri.endsWith(".action") || uri.indexOf(".") == -1) {
             if (isDynamicRemoteHost) {
                 RemoteDynamicHostLoader.setRemoteIp(WEB.getRemoteIP(req));
             }
             // 动态资源
             chain.doFilter(request, response);
-        } else if ((isRemote && !isExclude) || (!isRemote && isExclude)) {
+        } else if (isRemote) {
             response.setContentType(getContentType(uri));
             String remoteBase = docBasePath;
             if (isDynamicRemoteHost || isExclude) {
                 String ip = WEB.getRemoteIP(req);
                 remoteBase = before + ip + after;
-            }
-            if (!suffix.isEmpty() && !prefix.isEmpty() && uri.endsWith(suffix)) {
-                if (remoteBase.endsWith("/")) {
-                    remoteBase += prefix;
-                } else {
-                    remoteBase += "/" + prefix;
-                }
             }
             String resUrl = XString.makeUrl(remoteBase, uri);
             LOGGER.info("[FILTER_REMOTE_URL]: excludeHost={},Resource url={}", excludeHost, resUrl);
@@ -159,37 +152,15 @@ public class RemoteResourceFilter implements Filter {
                 LOGGER.error("[FILTER_REMOTE_URL]: Not found resource= {}", resUrl);
                 chain.doFilter(request, response);
             }
-        } else if ((isLocal && !isExclude) || (!isLocal && isExclude)) {
+        } else if (isLocal) {
             // 绝对路径本地加载
-            // String base = getMultiVersionDocBasePath(docBasePath, (HttpServletRequest) request);
             String realPath = docBasePath;
-            if (!suffix.isEmpty() && !prefix.isEmpty() && uri.endsWith(suffix)) {
-                if (realPath.endsWith("/")) {
-                    realPath += prefix;
-                } else {
-                    realPath += "/" + prefix;
-                }
-            }
             String path = XString.makePath(realPath, uri);
             readTo(path, (HttpServletResponse) response);
         } else {
             chain.doFilter(request, response);
         }
     }
-
-//    private String getMultiVersionDocBasePath(String docBasePath, HttpServletRequest request) {
-//        if (conf.isMultiVersion()) {
-//            String version = request.getParameter("_v");
-//
-//            if (XString.isNotBlank(version)) {
-//                int i = docBasePath.lastIndexOf("-");
-//                if (i != -1) {
-//                    return docBasePath.substring(0, i + 1) + version;
-//                }
-//            }
-//        }
-//        return docBasePath;
-//    }
 
     private static String getRelPath(String path) {
         try {
