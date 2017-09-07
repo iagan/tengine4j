@@ -110,7 +110,7 @@ public class Configuration {
                         String enablePerm = System.getProperty("tg.enable.perm");
                         String multiVersion = System.getProperty("tg.multi.version");
                         String host = System.getProperty("tg.host");
-                        logger.info("\n\n[TG.INIT] tg.img.base={}, tg.view.prefix={}, tg.view.suffix={}, tg.doc.base={}, tg.view.charset={}, tg.enable.perm={},tg.multi.version={}, tg.host\n\n", imageBase, prefix, suffix, docBase, charset, enablePerm, multiVersion, host);
+                        logger.info("\n\n[TG.INIT] tg.img.base={}, tg.view.prefix={}, tg.view.suffix={}, tg.doc.base={}, tg.view.charset={}, tg.enable.perm={},tg.multi.version={}, tg.host={}\n\n", imageBase, prefix, suffix, docBase, charset, enablePerm, multiVersion, host);
 
                         DEFAULT.imageBase = imageBase;
                         DEFAULT.viewPrefix = prefix;
