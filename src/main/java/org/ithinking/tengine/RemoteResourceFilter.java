@@ -162,7 +162,15 @@ public class RemoteResourceFilter implements Filter {
         } else if ((isLocal && !isExclude) || (!isLocal && isExclude)) {
             // 绝对路径本地加载
             // String base = getMultiVersionDocBasePath(docBasePath, (HttpServletRequest) request);
-            String path = XString.makePath(docBasePath, uri);
+            String realPath = docBasePath;
+            if (!suffix.isEmpty() && !prefix.isEmpty() && uri.endsWith(suffix)) {
+                if (realPath.endsWith("/")) {
+                    realPath += prefix;
+                } else {
+                    realPath += "/" + prefix;
+                }
+            }
+            String path = XString.makePath(realPath, uri);
             readTo(path, (HttpServletResponse) response);
         } else {
             chain.doFilter(request, response);
