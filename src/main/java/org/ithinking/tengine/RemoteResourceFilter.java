@@ -131,9 +131,9 @@ public class RemoteResourceFilter implements Filter {
         boolean isExclude = !excludeHost.isEmpty() && excludeHost.startsWith(fromHost);
         // Ajax或页面模板需要解析
         if (uri.endsWith(suffix) || uri.endsWith(".do") || uri.endsWith(".json") || uri.endsWith(".action") || uri.indexOf(".") == -1) {
-            if (isDynamicRemoteHost) {
-                RemoteDynamicHostLoader.setRemoteIp(WEB.getRemoteIP(req));
-            }
+            RemoteDynamicHostLoader.setRemoteIp(WEB.getRemoteIP(req));
+            RemoteDynamicHostLoader.setHost(fromHost);
+            RemoteDynamicHostLoader.setExcludeHost(excludeHost);
             // 动态资源
             chain.doFilter(request, response);
         } else if (isRemote) {

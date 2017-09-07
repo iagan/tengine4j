@@ -6,6 +6,7 @@ import org.ithinking.tengine.core.Template;
 import org.ithinking.tengine.core.TemplateEngine;
 import org.ithinking.tengine.html.parser.HtmlParser;
 import org.ithinking.tengine.loader.LoaderFactory;
+import org.ithinking.tengine.loader.RemoteDynamicHostLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.support.WebApplicationObjectSupport;
@@ -84,7 +85,10 @@ public class TengineViewResolver extends WebApplicationObjectSupport implements 
             final String forwardUrl = viewName.substring(FORWARD_URL_PREFIX.length());
             return new InternalResourceView(forwardUrl);
         }
-        if (this.isDynamicRemoteHost) {
+        String exHost = RemoteDynamicHostLoader.getExcludeHost();
+        String from = RemoteDynamicHostLoader.getHost();
+        boolean isExclude = from != null && exHost != null && !from.isEmpty() && !exHost.isEmpty() && from.startsWith(exHost);
+        if ((this.isDynamicRemoteHost && !isExclude) || (!this.isDynamicRemoteHost && isExclude)) {
             return this.resolveRemoteView(viewName, locale);
         } else {
             return resolveLocalView(viewName, locale);

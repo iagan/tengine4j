@@ -14,6 +14,7 @@ public class RemoteDynamicHostLoader extends RemoteLoader {
     private String after;
     private static final ThreadLocal<String> REMOTE_IP = new ThreadLocal<>();
     private static final ThreadLocal<String> HOST = new ThreadLocal<>();
+    private static final ThreadLocal<String> EXCLUDE_HOST = new ThreadLocal<>();
 
     public static void setRemoteIp(String remoteIp) {
         REMOTE_IP.set(remoteIp);
@@ -23,8 +24,16 @@ public class RemoteDynamicHostLoader extends RemoteLoader {
         HOST.set(host);
     }
 
-    public static String getHost(){
+    public static String getHost() {
         return HOST.get();
+    }
+
+    public static void setExcludeHost(String excludeHost) {
+        EXCLUDE_HOST.set(excludeHost);
+    }
+
+    public static String getExcludeHost() {
+        return EXCLUDE_HOST.get();
     }
 
     public RemoteDynamicHostLoader(String remoteUrl, String charset) {
