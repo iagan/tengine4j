@@ -139,14 +139,14 @@ public class RemoteResourceFilter implements Filter {
         } else if ((isRemote && !isExclude) || (!isRemote && isExclude)) {
             response.setContentType(getContentType(uri));
             String remoteBase = docBasePath;
-            if (isDynamicRemoteHost) {
+            if (isDynamicRemoteHost || isExclude) {
                 String ip = WEB.getRemoteIP(req);
                 remoteBase = before + ip + after;
             }
             String resUrl = XString.makeUrl(remoteBase, uri);
             LOGGER.info("[FILTER_REMOTE_URL]: Resource url={}", resUrl);
             try {
-                Http.get(resUrl, ((HttpServletRequest) request).getHeader("Host"), response.getOutputStream());
+                Http.get(resUrl, fromHost, response.getOutputStream());
             } catch (Http404Exception e) {
                 // 对于未找到的资源，可以直接穿透使用服务器的资源
                 LOGGER.error("[FILTER_REMOTE_URL]: Not found resource= {}", resUrl);
