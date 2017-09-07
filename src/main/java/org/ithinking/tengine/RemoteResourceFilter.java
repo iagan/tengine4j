@@ -94,8 +94,8 @@ public class RemoteResourceFilter implements Filter {
         //
         docBasePath = conf.getDocBase();
         isDynamicRemoteHost = conf.isDynamicRemoteHost();
-        prefix = conf.getViewPrefix();
-        suffix = conf.getViewSuffix();
+        prefix = XString.defVal(conf.getViewPrefix(), "").trim();
+        suffix = XString.defVal(conf.getViewSuffix(), "").trim();
         //
         LOGGER.info("[Init-2] prefix={},suffix={}, charset={}, docBasePath={}, isDynamicRemoteUrl={}",
                 conf.getViewPrefix(), suffix, conf.getViewCharset(), docBasePath, isDynamicRemoteHost);
@@ -142,6 +142,13 @@ public class RemoteResourceFilter implements Filter {
             if (isDynamicRemoteHost || isExclude) {
                 String ip = WEB.getRemoteIP(req);
                 remoteBase = before + ip + after;
+            }
+            if (!suffix.isEmpty() && !prefix.isEmpty() && uri.endsWith(suffix)) {
+                if (remoteBase.endsWith("/")) {
+                    remoteBase += prefix;
+                } else {
+                    remoteBase += "/" + prefix;
+                }
             }
             String resUrl = XString.makeUrl(remoteBase, uri);
             LOGGER.info("[FILTER_REMOTE_URL]: excludeHost={},Resource url={}", excludeHost, resUrl);
