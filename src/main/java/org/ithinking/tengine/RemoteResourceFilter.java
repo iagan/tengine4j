@@ -129,8 +129,8 @@ public class RemoteResourceFilter implements Filter {
         String fromHost = ((HttpServletRequest) request).getHeader("Host");
         String excludeHost = conf.getHost() == null ? "" : conf.getHost();
         boolean isExclude = !excludeHost.isEmpty() && excludeHost.startsWith(fromHost);
-
-        if (uri.endsWith(suffix) || uri.endsWith(".do") || uri.endsWith(".json") || uri.endsWith(".action") || uri.indexOf(".") == -1) {
+        // uri.endsWith(suffix) ||
+        if (uri.endsWith(".do") || uri.endsWith(".json") || uri.endsWith(".action") || uri.indexOf(".") == -1) {
             if (isDynamicRemoteHost) {
                 RemoteDynamicHostLoader.setRemoteIp(WEB.getRemoteIP(req));
             }
@@ -144,7 +144,7 @@ public class RemoteResourceFilter implements Filter {
                 remoteBase = before + ip + after;
             }
             String resUrl = XString.makeUrl(remoteBase, uri);
-            LOGGER.info("[FILTER_REMOTE_URL]: Resource url={}", resUrl);
+            LOGGER.info("[FILTER_REMOTE_URL]: excludeHost={},Resource url={}", excludeHost, resUrl);
             try {
                 Http.get(resUrl, fromHost, response.getOutputStream());
             } catch (Http404Exception e) {
